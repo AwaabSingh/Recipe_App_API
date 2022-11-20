@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const Recipe = require("../models/Recipe");
 const User = require("../models/User");
+const { buildPDF } = require("../utils/pdf-service");
 
 /**
  * @desc Get Recepie list
@@ -159,8 +160,33 @@ const voteRecipe = asyncHandler( async (req, res) => {
         throw new Error('User not authorized')
     }
 
-    const index = recipe.votes
+    const index = recipe.votes.findIndex(id => id === String(req.user.id))
+
+    if(index === -1) {
+       recipe.votes.push(req.user.id)
+    } else {
+       recipe.votes = recipe.votes.filter(id => id !== String(req.user.id))
+    }
+
+    await recipe.save();
+
+    res.status(200).json(recipe)
+});
+
+const printRecipe = asyncHandler( async (req, res) => {
+    const { id: recipeID } = req.params
+    const recipe = await Recipe.findOne({ _id: recipeID })
+    if (!recipe) {
+        res.status(404)
+      throw new Error (`No recipe with id : ${recipeID}`);
+    }
+
+    return res.status(200).json({ recipe })
+
 })
+
+
+
 
 module.exports = {
   getRecipes,
@@ -168,5 +194,7 @@ module.exports = {
   getRecipe,
   updateRecipe,
   deleteRecipe,
-  isPublished
+  isPublished,
+  voteRecipe,
+  printRecipe
 };

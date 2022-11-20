@@ -21,7 +21,7 @@ app.use(notFound)
 
 // Routes imports
 const userRoutes = require('./routes/userRoutes')
-const recipeRoutes = require('./routes/RecipeRoute')
+const recipeRoutes = require('./routes/recipeRoute')
 
 
 // Routes configurations
