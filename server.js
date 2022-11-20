@@ -4,11 +4,38 @@ const cors = require('cors')
 const morgan = require('morgan')
 const { errorHandler, notFound } = require('./middlewares/errorMiddleware')
 const { connectDB } = require('./config/db')
+const swaggerUI = require('swagger-ui-express')
+const swaggerJsDoc = require('swagger-jsdoc')
 
+//options object for swaggerjs
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "recipe Api",
+      version: "1.0.0",
+      description: "An api for printing recipes App"
+    },
+    servers: [
+      {
+        //update to production url
+        url: 'https://recipe-app-42aq.onrender.com'
+      }
+    ]
+  },
+  apis: ["./routes/*.js"]
+};
 
-
+const specs = swaggerJsDoc(options)
+ 
 
 const app = express()
+
+//setting up swagger doc
+app.use("/", swaggerUI.serve, swaggerUI.setup(specs))
+
+
+
 
 dotenv.config();
 app.use(express.json());
