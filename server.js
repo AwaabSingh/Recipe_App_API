@@ -32,7 +32,7 @@ const specs = swaggerJsDoc(options)
 const app = express()
 
 //setting up swagger doc
-app.use("/", swaggerUI.serve, swaggerUI.setup(specs))
+app.use("/api/v1/docs", swaggerUI.serve, swaggerUI.setup(specs))
 
 
 

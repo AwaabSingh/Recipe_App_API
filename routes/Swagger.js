@@ -597,6 +597,7 @@ const router = express.Router()
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
+ * 
  */
 
 module.exports = router;
