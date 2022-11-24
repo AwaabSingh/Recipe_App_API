@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const { sendEmail } = require("../utils/sendMail");
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
+const { v4: uuidv4 } = require('uuid');
 
 
 
@@ -15,24 +16,72 @@ const jwt = require("jsonwebtoken")
  */
 exports.register = asyncHandler(async (req, res) => {
   try {
-    const { fullname, username, email, password } = req.body
+    const { fullname, username, email, password,confirmationCode } = req.body
+
+    const  verifyToken = uuidv4()
  
     const userExist = await User.findOne({ email })
 
-    if(!userExist) {
-        const user = new User({ fullname, username, email, password })
-    await user.save();
-  
-    return res.status(201).json({ msg: `Welcome ${username},Your Registration Was Successful. Please Login`})
-    }
-    
+ if(userExist) {
     res.status(400)
-    throw new Error('User already Exist')
+    throw new Error('User already Exists')
+   }
+
+   const user = await User.create({
+      fullname,
+      username,
+      email,
+      password,
+      confirmationCode:verifyToken
+   })
+
+   if(user) {
+   
+       const text = `<h1>Email Confirmation</h1>
+        <h2>Hello ${username}</h2>
+        <p>Verify your email address to complete the signup and login to your account to Kitchen Diary</p>
+        <a href=http://localhost:5000/user/confirm/${user.confirmationCode}> Click here</a>
+        </div>`
+
+         await sendEmail({
+      email: user.email,
+      subject: 'Email Verification',
+      message: text,
+    });
+
+  res.status(201).json({
+    msg: 'Account Created Successfully! Please check your mail'
+  })
+   }
 
   } catch(error){
     res.status(404);
     throw new Error(error);
   }
+})
+/**
+ * @desc Verify User Email
+ * @route GET
+ * @route /api/v1/user/register
+ * @access Public
+ */
+exports.verifyAccount = asyncHandler( async(req, res) => {
+    const { confirmationCode } = req.params;
+    
+
+    const confirmUser = await User.findOne({ confirmationCode });
+
+    if(!confirmUser) {
+        res.status(404);
+      throw new Error("User not found");
+    } else {
+      confirmUser.confirmationCode = undefined;
+      await confirmUser.save();
+
+       res.status(200).json({
+        msg: "Verification Successful. You can login now",
+      });
+    }
 })
 
 /**
@@ -61,10 +110,16 @@ exports.login = asyncHandler(async (req, res) => {
   // check if password matches
   const isMatch = await user.matchPassword(password);
 
+
   if (!isMatch) {
     res.status(401);
     throw new Error('Invalid Credentials');
   }
+
+    if(user.confirmationCode !== undefined) {
+          res.status(401);
+    throw new Error('Your Account is not Verified. Please Verifiy Your Account');
+    }
   res.status(200).json({
      success: true,
     message: "Logged in successfully",

@@ -25,7 +25,11 @@ const userSchema = new Schema({
 		required: true
 	},
 	resetPasswordToken: String,
-    resetPasswordExpire: Date
+    resetPasswordExpire: Date,
+    confirmationCode: {
+      type: String,
+      unique: true,
+    },
 }, {timestamps: true });
 
 userSchema.pre('save', async function(next){
