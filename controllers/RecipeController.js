@@ -149,6 +149,8 @@ const isPublished = asyncHandler(async ( req, res) => {
 const voteRecipe = asyncHandler( async (req, res) => {
        const recipe = await Recipe.findById(req.params.id)
 
+      
+
         if(!recipe) {
          res.status(400)
          throw new Error('Recipe is not found')

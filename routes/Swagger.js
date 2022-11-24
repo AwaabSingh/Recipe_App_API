@@ -185,6 +185,37 @@ const router = express.Router()
  *                     application/json:
  *                         schema:
  *                             $ref: '#/components/response/Error'
+* /api/v1/user/confirm/{confirmationCode}:
+ *      get:
+ *         summary: Verify user account
+ *         tags:
+ *             - users
+ *         parameters:
+ *             - in: path
+ *               name: confirmationCode
+ *               schema:
+ *                    type: string
+ *                    required: true
+ *         responses:
+ *             '200':
+ *                description: Success
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            type: object
+ *                            properties:
+ *                                success:
+ *                                    type: boolean
+ *                                    description: success bolean.
+ *                                message:
+ *                                     type: string
+ *                                     description: success message.
+ *             '400':
+ *                 description: Invalid Token
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
  * /api/v1/user/login:
  *     post:
  *         summary: logs user in
