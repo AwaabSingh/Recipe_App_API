@@ -10,7 +10,7 @@ const { buildPDF } = require("../utils/pdf-service");
  * @access Public
  */
 const getRecipes = asyncHandler(async (req, res) => {
-  const recipes = await Recipe.find()
+  const recipes = await Recipe.find().populate("author", "username")
   if (!recipes) {
     res.status(404);
     throw new Error(`No Recepies found`);
@@ -50,7 +50,7 @@ const createRecipe = asyncHandler(async (req, res) => {
 
 const getRecipe = asyncHandler(async (req, res) => {
     const { id: recipeID } = req.params
-    const recipe = await Recipe.findOne({ _id: recipeID })
+    const recipe = await Recipe.findOne({ _id: recipeID }).populate("author", "username")
     if (!recipe) {
         res.status(404)
       throw new Error (`No recipe with id : ${recipeID}`);
@@ -189,6 +189,22 @@ const printRecipe = asyncHandler( async (req, res) => {
 
 
 
+const userRecipes = asyncHandler(async (req, res) => {
+  // Get user id
+  const userId = req.user.id;
+  recipe = await Recipe.findOne({ author : userId }).populate("author", "username")
+  // check if user exit
+  if(!req.user){
+    req.status(401)
+    throw new Error('User not found')
+  };
+  // Check for user recipe
+  if (!recipe) {
+    res.status(404)
+  throw new Error (`No recipe for this userId : ${userId}`);
+  };
+  return res.status(200).json(recipe);
+})
 
 module.exports = {
   getRecipes,
@@ -198,5 +214,6 @@ module.exports = {
   deleteRecipe,
   isPublished,
   voteRecipe,
-  printRecipe
+  printRecipe,
+  userRecipes
 };

@@ -594,6 +594,42 @@ const router = express.Router()
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
+  * /api/v1/recipe/myrecipe:
+ *     get:
+ *         summary: Get all recipe for a specify user (authenticated)
+ *         tags:
+ *             - recipes
+ *         security:
+ *             - bearerAuth: []
+ *        
+ *         schema:
+ *           type: string
+ *         responses:
+ *             '200':
+ *                description: Success
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            type: object
+ *                            properties:
+ *                                isPublished:
+ *                                    type: boolean
+ *                                message:
+ *                                     type: string
+ *                                     description: success message.
+ *             '400':
+ *                 description: No recipe found with id
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ * 
+ *             '401':
+ *                 description: User not authorized
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
  * 
  * /api/v1/recipe/{id}/vote:
  *     patch:
