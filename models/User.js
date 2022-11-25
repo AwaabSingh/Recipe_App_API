@@ -26,6 +26,11 @@ const userSchema = new Schema({
 	},
 	resetPasswordToken: String,
     resetPasswordExpire: Date,
+     status: {
+      type: String,
+      enum: ["Pending", "Active"],
+      default: "Pending",
+    },
     confirmationCode: {
       type: String,
       unique: true,

@@ -68,22 +68,21 @@ exports.register = asyncHandler(async (req, res) => {
 exports.verifyAccount = asyncHandler( async(req, res) => {
     try {
       const { confirmationCode } = req.params;
-
-      console.log(confirmationCode)
-    
+    // compare the confimation code
 
     const confirmUser = await User.findOne({ confirmationCode });
 
-     
-    if(!confirmUser) {
-        res.status(404);
+    if (!confirmUser) {
+      res.status(404);
       throw new Error("User not found");
     } else {
-      confirmUser.confirmationCode = "";
+      confirmUser.confirmationCode = null;
+      confirmUser.status = "Active";
       await confirmUser.save();
 
-       res.status(200).json({
+      res.status(200).json({
         msg: "Verification Successful. You can login now",
+        status: confirmUser.status,
       });
     }
     } catch (error) {
@@ -124,7 +123,7 @@ exports.login = asyncHandler(async (req, res) => {
     throw new Error('Invalid Credentials');
   }
 
-    if(user.confirmationCode !== undefined) {
+    if(user.status === "Pending") {
           res.status(401);
     throw new Error('Your Account is not Verified. Please Verifiy Your Account');
     }
