@@ -31,8 +31,7 @@ const userSchema = new Schema({
       type: Boolean,
       default: false,
     },
-    confirmationCode: String,
-    confirmationCodeExpire: Date,
+    confirmationCode: String
 }, {timestamps: true });
 
 userSchema.pre('save', async function(next){

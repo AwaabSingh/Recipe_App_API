@@ -32,8 +32,7 @@ exports.register = asyncHandler(async (req, res) => {
       username,
       email,
       password,
-      confirmationCode:verifyToken,
-      confirmationCodeExpire: Date.now() + 10 * 60 * 1000
+      confirmationCode:verifyToken
    })
 
    if(user) {
@@ -69,20 +68,16 @@ exports.register = asyncHandler(async (req, res) => {
  */
 exports.verifyAccount = asyncHandler( async(req, res) => {
     try {
-      const { confirmationCode } = req.params;
+        const { confirmationCode } = req.params;
     // compare the confimation code
 
-    const confirmUser = await User.findOne({ 
-      confirmationCode, 
-      confirmationCodeExpire:{$gt: Date.now()} 
-    });
+    const confirmUser = await User.findOne({ confirmationCode });
 
     if (!confirmUser) {
       res.status(404);
       throw new Error("User not found");
     } else {
-      delete confirmUser.confirmationCode
-      confirmUser.status = true
+      confirmUser.status = true;
       await confirmUser.save();
 
       res.status(200).json({
