@@ -66,21 +66,29 @@ exports.register = asyncHandler(async (req, res) => {
  * @access Public
  */
 exports.verifyAccount = asyncHandler( async(req, res) => {
-    const { confirmationCode } = req.params;
+    try {
+      const { confirmationCode } = req.params;
+
+      console.log(confirmationCode)
     
 
     const confirmUser = await User.findOne({ confirmationCode });
 
+     
     if(!confirmUser) {
         res.status(404);
       throw new Error("User not found");
     } else {
-      confirmUser.confirmationCode = undefined;
+      confirmUser.confirmationCode = "";
       await confirmUser.save();
 
        res.status(200).json({
         msg: "Verification Successful. You can login now",
       });
+    }
+    } catch (error) {
+      res.status(400)
+      throw new Error(error.message)
     }
 })
 
