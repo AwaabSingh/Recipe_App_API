@@ -40,7 +40,7 @@ exports.register = asyncHandler(async (req, res) => {
        const text = `<h1>Email Confirmation</h1>
         <h2>Hello ${username}</h2>
         <p>Verify your email address to complete the signup and login to your account to Kitchen Diary</p>
-        <a href=http://localhost:5000/user/confirm/${user.confirmationCode}> Click here</a>
+        <a href=http://localhost:3000/api/v1/user/confirm/${user.confirmationCode}> Click here</a>
         </div>`
 
          await sendEmail({
