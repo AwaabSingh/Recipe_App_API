@@ -10,13 +10,18 @@ const { buildPDF } = require("../utils/pdf-service");
  * @access Public
  */
 const getRecipes = asyncHandler(async (req, res) => {
-  const recipes = await Recipe.find().populate("author", "username")
+  try {
+     const recipes = await Recipe.find().populate("author", "username")
   if (!recipes) {
     res.status(404);
     throw new Error(`No Recepies found`);
   }
 
   return res.status(200).json({ recipes });
+  } catch (error) {
+      res.status(400)
+    throw new Error(error.message)
+  }
 });
 
 
@@ -28,28 +33,42 @@ const getRecipes = asyncHandler(async (req, res) => {
  */
 const createRecipe = asyncHandler(async (req, res) => {
     //  Get user id and add to the body field 
-     req.body.user = req.user.id;
+     try {
+      req.body.user = req.user.id;
 
-     const { title, description, utensils, user, ingredients,steps, image } = req.body;
+     const { title, description, utensils, user, ingredients,steps, images, coverImage } = req.body;
   
 
     const recipe = await Recipe.create({
-      title: title,
+      title,
       author: user,
-      image: image,
-      description: description,
-      utensils: utensils,
+      images,
+      description,
+      utensils,
       ingredients,
-      steps
+      steps,
+      coverImage
     });
 
-    const createdRecipe = await recipe.save();
-    res.status(201).json({ createdRecipe });
+    if(recipe) {
+          const createdRecipe = await recipe.save();
+    res.status(201).json( createdRecipe);
+    }
+
+
+     } catch (error) {
+    
+    res.status(400)
+    throw new Error(error.message)
+     }
+
+  
 });
 
 
 const getRecipe = asyncHandler(async (req, res) => {
-    const { id: recipeID } = req.params
+    try {
+      const { id: recipeID } = req.params
     const recipe = await Recipe.findOne({ _id: recipeID }).populate("author", "username")
     if (!recipe) {
         res.status(404)
@@ -57,10 +76,15 @@ const getRecipe = asyncHandler(async (req, res) => {
     }
 
     return res.status(200).json({ recipe })
+    } catch (error) {
+       res.status(400)
+    throw new Error(error.message)
+    }
   });
 
   const updateRecipe = asyncHandler(async (req, res) => {
-       const recipe = await Recipe.findById(req.params.id)
+       try {
+        const recipe = await Recipe.findById(req.params.id)
 
        if(!recipe) {
         res.status(400)
@@ -85,13 +109,18 @@ const getRecipe = asyncHandler(async (req, res) => {
     
     
      res.status(200).json(updaterecipe)
+       } catch (error) {
+             res.status(400)
+        throw new Error(error.message)
+       }
     
 
     
   });
 
   const deleteRecipe = asyncHandler( async (req, res) => {
-     const recipe = await Recipe.findById(req.params.id)
+    try {
+       const recipe = await Recipe.findById(req.params.id)
 
      if(!recipe) {
          res.status(400)
@@ -104,7 +133,7 @@ const getRecipe = asyncHandler(async (req, res) => {
         throw new Error('User not authorized')
     }
 
-    // Check for owner study
+    // Check for owner recipe
     if(recipe.author.toString() !== req.user.id) {
         res.status(401)
         throw new Error('User not authorized')
@@ -112,11 +141,16 @@ const getRecipe = asyncHandler(async (req, res) => {
       await recipe.remove()
 
     res.status(200).json({ id: req.params.id, msg: "Recipe Deleted Successfully" })
+    } catch (error) {
+        res.status(500)
+         throw new Error(error.message)
+    }
 })
 
 
 const isPublished = asyncHandler(async ( req, res) => {
-      const user = req.user;
+      try {
+        const user = req.user;
       const recipe = await Recipe.findById(req.params.id)
 
         if(!recipe) {
@@ -130,7 +164,7 @@ const isPublished = asyncHandler(async ( req, res) => {
         throw new Error('User not authorized')
     }
 
-    // Check for owner study
+    // Check for owner recipe
     if(recipe.author.toString() !== req.user.id) {
         res.status(401)
         throw new Error('User not authorized')
@@ -144,10 +178,15 @@ const isPublished = asyncHandler(async ( req, res) => {
         isPublished: recipe.isPublished,
         msg: "Your Recipe has been Published Successfully"
     })
+      } catch (error) {
+         res.status(500)
+         throw new Error(error.message)
+      }
 })
 
 const voteRecipe = asyncHandler( async (req, res) => {
-       const recipe = await Recipe.findById(req.params.id)
+      try {
+         const recipe = await Recipe.findById(req.params.id)
 
       
 
@@ -173,10 +212,15 @@ const voteRecipe = asyncHandler( async (req, res) => {
     await recipe.save();
 
     res.status(200).json(recipe)
+      } catch (error) {
+         res.status(500)
+         throw new Error(error.message)
+      }
 });
 
 const printRecipe = asyncHandler( async (req, res) => {
-    const { id: recipeID } = req.params
+    try {
+      const { id: recipeID } = req.params
     const recipe = await Recipe.findOne({ _id: recipeID })
     if (!recipe) {
         res.status(404)
@@ -185,12 +229,17 @@ const printRecipe = asyncHandler( async (req, res) => {
 
     return res.status(200).json({ recipe })
 
+    } catch (error) {
+      res.status(500)
+         throw new Error(error.message)
+    }
 })
 
 
 
 const userRecipes = asyncHandler(async (req, res) => {
-  // Get user id
+  try {
+    // Get user id
   const userId = req.user.id;
   recipe = await Recipe.findOne({ author : userId }).populate("author", "username")
   // check if user exit
@@ -204,6 +253,10 @@ const userRecipes = asyncHandler(async (req, res) => {
   throw new Error (`No recipe for this userId : ${userId}`);
   };
   return res.status(200).json(recipe);
+  } catch (error) {
+     res.status(500)
+         throw new Error(error.message)
+  }
 })
 
 module.exports = {

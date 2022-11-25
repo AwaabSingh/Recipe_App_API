@@ -6,9 +6,8 @@ const recipeSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-	image: {
+	coverImage: {
 		type: String,
-		required: true
 	},
 	description: {
 		type: String,
@@ -16,7 +15,6 @@ const recipeSchema = new mongoose.Schema({
 	},
     utensils: {
 		type: [String],
-		required: true
 	},
     author: {
         type:  mongoose.Schema.ObjectId,
@@ -28,17 +26,28 @@ const recipeSchema = new mongoose.Schema({
 		default: false
 	},
    ingredients: {
-        type: [String],
+        type: [{
+			id:{ type: String, required: true },
+			value:{ type: String, required: true},
+		}],
 	   required: true
     },
   steps: {
         type: [{
+			id:{ type: String, required: true},
 			step:{ type: String, required: true},
 			text: { type: String, required: true }
 		}],
 	   required: true
     },
 	  votes: { type: [String], default: [] },
+	  images: {
+		 type: [{
+			id:{ type: String, required: true},
+			name: { type: String, required: true },
+			imgUrl: { type: String, required: true }
+		}],
+	  }
 }, {timestamps: true });
 const Recipe = mongoose.model('Recipe', recipeSchema);
 module.exports = Recipe;
