@@ -35,8 +35,7 @@ const recipeSchema = new mongoose.Schema({
   steps: {
         type: [{
 			id:{ type: String, required: true},
-			step:{ type: String, required: true},
-			text: { type: String, required: true }
+			value:{ type: String, required: true},
 		}],
 	   required: true
     },
