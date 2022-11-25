@@ -34,6 +34,10 @@ const recipeSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false
 	},
+	templateId:{
+		type: Number,
+		required: true
+	},
    ingredients: {
         type: [{
 			id:{ type: String, required: true },

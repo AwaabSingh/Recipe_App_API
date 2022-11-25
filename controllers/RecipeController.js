@@ -36,7 +36,7 @@ const createRecipe = asyncHandler(async (req, res) => {
      try {
       req.body.user = req.user.id;
 
-     const { title, description, utensils, user, ingredients,steps, images, coverImage,preparationTime,yield,difficulty } = req.body;
+     const { title, description, utensils, user, ingredients,steps, images, coverImage,preparationTime,yield,difficulty, templateId } = req.body;
   
 
     const recipe = await Recipe.create({
@@ -50,7 +50,8 @@ const createRecipe = asyncHandler(async (req, res) => {
       coverImage,
       preparationTime,
       yield,
-      difficulty
+      difficulty,
+      templateId
     });
 
     if(recipe) {
