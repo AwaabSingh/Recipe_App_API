@@ -16,9 +16,9 @@ const { v4: uuidv4 } = require('uuid');
  */
 exports.register = asyncHandler(async (req, res) => {
   try {
-    const { fullname, username, email, password,confirmationCode } = req.body
+    const { fullname, username, email, password } = req.body
 
-    const  verifyToken = uuidv4()
+    const  verifyToken =  uuidv4()
  
     const userExist = await User.findOne({ email })
 
@@ -32,7 +32,8 @@ exports.register = asyncHandler(async (req, res) => {
       username,
       email,
       password,
-      confirmationCode:verifyToken
+      confirmationCode:verifyToken,
+      confirmationCodeExpire: Date.now() + 10 * 60 * 1000
    })
 
    if(user) {
@@ -71,14 +72,17 @@ exports.verifyAccount = asyncHandler( async(req, res) => {
       const { confirmationCode } = req.params;
     // compare the confimation code
 
-    const confirmUser = await User.findOne({ confirmationCode });
+    const confirmUser = await User.findOne({ 
+      confirmationCode, 
+      confirmationCodeExpire:{$gt: Date.now()} 
+    });
 
     if (!confirmUser) {
       res.status(404);
       throw new Error("User not found");
     } else {
-      // confirmUser.confirmationCode = "";
-      confirmUser.status = "Active";
+      delete confirmUser.confirmationCode
+      confirmUser.status = true
       await confirmUser.save();
 
       res.status(200).json({
@@ -124,7 +128,7 @@ exports.login = asyncHandler(async (req, res) => {
     throw new Error('Invalid Credentials');
   }
 
-    if(user.status === "Pending") {
+    if(user.status === false) {
           res.status(401);
     throw new Error('Your Account is not Verified. Please Verifiy Your Account');
     }

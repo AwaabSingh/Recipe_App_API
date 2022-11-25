@@ -18,23 +18,21 @@ const userSchema = new Schema({
 	email: {
 		type: String,
 		required: true,
-		unique: true
+		unique: true,
 	},
 	password: {
 		type: String,
-		required: true
+		required: true,
+    minlength: 6,
 	},
 	resetPasswordToken: String,
     resetPasswordExpire: Date,
      status: {
-      type: String,
-      enum: ["Pending", "Active"],
-      default: "Pending",
+      type: Boolean,
+      default: false,
     },
-    confirmationCode: {
-      type: String,
-      unique: true,
-    },
+    confirmationCode: String,
+    confirmationCodeExpire: Date,
 }, {timestamps: true });
 
 userSchema.pre('save', async function(next){
@@ -68,6 +66,8 @@ userSchema.methods.getResetPasswordToken = function () {
 
     return resetToken
 };
+
+
 
 
 const User = mongoose.model('User', userSchema);
