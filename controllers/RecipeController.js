@@ -47,7 +47,10 @@ const createRecipe = asyncHandler(async (req, res) => {
       utensils,
       ingredients,
       steps,
-      coverImage
+      coverImage,
+      preparationTime,
+      yield,
+      difficulty
     });
 
     if(recipe) {
