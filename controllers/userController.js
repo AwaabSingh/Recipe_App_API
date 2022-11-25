@@ -40,7 +40,8 @@ exports.register = asyncHandler(async (req, res) => {
        const text = `<h1>Email Confirmation</h1>
         <h2>Hello ${username}</h2>
         <p>Verify your email address to complete the signup and login to your account to Kitchen Diary</p>
-        <a href=http://localhost:3000/api/v1/user/confirm/${user.confirmationCode}> Click here</a>
+        <a href=http://localhost:3000/confirm/${user.confirmationCode}> Click here</a>
+
         </div>`
 
          await sendEmail({
@@ -76,7 +77,7 @@ exports.verifyAccount = asyncHandler( async(req, res) => {
       res.status(404);
       throw new Error("User not found");
     } else {
-      confirmUser.confirmationCode = null;
+      confirmUser.confirmationCode = undefined;
       confirmUser.status = "Active";
       await confirmUser.save();
 
@@ -236,7 +237,6 @@ exports.forgotPassword = asyncHandler( async (req, res) => {
       data: 'Email sent',
     });
   } catch (error) {
-    console.log(error);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
 
