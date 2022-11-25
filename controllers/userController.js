@@ -77,7 +77,7 @@ exports.verifyAccount = asyncHandler( async(req, res) => {
       res.status(404);
       throw new Error("User not found");
     } else {
-      confirmUser.confirmationCode = "";
+      // confirmUser.confirmationCode = "";
       confirmUser.status = "Active";
       await confirmUser.save();
 
