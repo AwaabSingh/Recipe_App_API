@@ -245,7 +245,7 @@ const userRecipes = asyncHandler(async (req, res) => {
   try {
     // Get user id
   const userId = req.user.id;
-  recipe = await Recipe.findOne({ author : userId }).populate("author", "username")
+  recipe = await Recipe.find({ author : userId }).populate("author", "username")
   // check if user exit
   if(!req.user){
     req.status(401)
