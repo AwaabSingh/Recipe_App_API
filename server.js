@@ -19,8 +19,11 @@ const options = {
     servers: [
       {
         //update to production url
-        url: 'https://recipe-app-42aq.onrender.com'
+        //url: 'https://recipe-app-42aq.onrender.com'
         // url: 'http://localhost:4000'
+        url: 'https://colorful-fedora-clam.cyclic.app'
+
+
       }
     ]
   },
