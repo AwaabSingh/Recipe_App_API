@@ -205,22 +205,17 @@ exports.forgotPassword = asyncHandler( async (req, res) => {
   const resetToken = user.getResetPasswordToken();
 
   await user.save({ validateBeforeSave: false });
-  // create reset url
-  const resetUrl = `${req.protocol}://${req.get(
-    'host'
-  )}/api/v1/user/resetpassword/${resetToken}`;
-
-  // console.log(resetUrl)
+ 
 
   // create message to pass
-  const text = `<h1>Email Confirmation</h1>
-        <h2>Hello ${user.userName}</h2>
-        <p>
-        You are receiving this email because you (or someone else) has
-         requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}
-        </p>
-       
-        </div>`;
+  const text = `<h1>Password Reset Link</h1>
+        <h2>Hello ${user.username}</h2>
+        <p>You are receiving this email because you (or someone else) has
+         requested the reset of a password</p>
+           <a href='http://kitchendiary.hng.tech/resetpassword/${resetToken}'> Click here to reset your password</a>
+
+        </div>`
+
 
 
   // console.log(message)
