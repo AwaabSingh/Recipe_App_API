@@ -212,7 +212,7 @@ exports.forgotPassword = asyncHandler( async (req, res) => {
         <h2>Hello ${user.username}</h2>
         <p>You are receiving this email because you (or someone else) has
          requested the reset of a password</p>
-           <a href='http://kitchendiary.hng.tech/resetpassword/${resetToken}'> Click here to reset your password</a>
+           <a href='kitchendiary.hng.tech/resetpassword/${resetToken}'> Click here to reset your password</a>
 
         </div>`
 
