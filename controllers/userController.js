@@ -1,12 +1,10 @@
-const asyncHandler = require("express-async-handler");
-const User = require("../models/User");
+const asyncHandler = require('express-async-handler');
+const User = require('../models/User');
 const crypto = require('crypto');
-const { sendEmail } = require("../utils/sendMail");
-const bcrypt = require("bcrypt")
-const jwt = require("jsonwebtoken")
+const { sendEmail } = require('../utils/sendMail');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
-
-
 
 /**
  * @desc Register  a user
@@ -15,84 +13,79 @@ const { v4: uuidv4 } = require('uuid');
  * @access Public
  */
 exports.register = asyncHandler(async (req, res) => {
-  try {
-    const { fullname, username, email, password,confirmationCode } = req.body
+	try {
+		const { fullname, username, email, password, confirmationCode } = req.body;
 
-    const  verifyToken =  uuidv4()
+		const verifyToken = uuidv4();
 
-    
- 
-    const userExist = await User.findOne({ email })
+		const userExist = await User.findOne({ email });
 
- if(userExist) {
-    res.status(400)
-    throw new Error('User already Exists')
-   }
+		if (userExist) {
+			res.status(400);
+			throw new Error('User already Exists');
+		}
 
- 
-   const user = await User.create({
-      fullname,
-      username,
-      email,
-      password,
-      confirmationCode:verifyToken
-   })
+		const user = await User.create({
+			fullname,
+			username,
+			email,
+			password,
+			confirmationCode: verifyToken,
+		});
 
-   if(user) {
-  
-       const text = `<h1>Email Confirmation</h1>
+		if (user) {
+			const text = `<h1>Email Confirmation</h1>
         <h2>Hello ${username}</h2>
         <p>Verify your email address to complete the signup and login to your account to Kitchen Diary</p>
         <a href='https://kitchendiary.hng.tech/confirm/${user.confirmationCode}'> Click here</a>
 
-        </div>`
+        </div>`;
 
-         await sendEmail({
-      email: user.email,
-      subject: 'Email Verification',
-      message: text,
-    });
+			await sendEmail({
+				email: user.email,
+				subject: 'Email Verification',
+				message: text,
+			});
 
-  res.status(201).json({
-    msg: 'Account Created Successfully! Please check your mail',
-  })
-   }
-
-  } catch(error){
-    res.status(404);
-    throw new Error(error);
-  }
-})
+			res.status(201).json({
+				msg: 'Account Created Successfully! Please check your mail',
+			});
+		}
+	} catch (error) {
+		res.status(404);
+		throw new Error(error);
+	}
+});
 /**
  * @desc Verify User Email
  * @route GET
  * @route /api/v1/user/register
  * @access Public
  */
-exports.verifyAccount = asyncHandler( async(req, res) => {
-    try {
-        const { confirmationCode } = req.params;
-    // compare the confimation code
+exports.verifyAccount = asyncHandler(async (req, res) => {
+	try {
+		const { confirmationCode } = req.params;
+		// compare the confimation code
 
-    const confirmUser = await User.findOne({ confirmationCode });
+		const confirmUser = await User.findOne({ confirmationCode });
 
-    if (!confirmUser) {
-      res.status(404);
-      throw new Error("User not found");
-    } else {
-      confirmUser.status = true;
-      await confirmUser.save();
+		if (!confirmUser) {
+			res.status(404);
+			throw new Error('User not found');
+		} else {
+			confirmUser.status = true;
+			await confirmUser.save();
 
-      res.status(200).json({
-        msg: "Verification Successful. You can login now",
-        status: confirmUser.status,
-      });
-    }
-    } catch (error) {
-      res.status(400)
-      throw new Error(error.message)
-    }
-})
+			res.status(200).json({
+				msg: 'Verification Successful. You can login now',
+				status: confirmUser.status,
+			});
+		}
+	} catch (error) {
+		res.status(400);
+		throw new Error(error.message);
+	}
+});
 
 /**
  * @desc Login a user
@@ -101,42 +94,42 @@ exports.verifyAccount = asyncHandler( async(req, res) => {
  * @access Public
  */
 exports.login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+	const { email, password } = req.body;
 
-  // Validate email and password
-  if (!email || !password) {
-    res.status(404);
-    throw new Error('Please provide an email and password');
-  }
+	// Validate email and password
+	if (!email || !password) {
+		res.status(404);
+		throw new Error('Please provide an email and password');
+	}
 
-  // Check for user
-  const user = await User.findOne({ email }).select('+password');
+	// Check for user
+	const user = await User.findOne({ email }).select('+password');
 
-  if (!user) {
-    res.status(401) 
-    throw new Error('Invalid Credentials');
-  }
+	if (!user) {
+		res.status(401);
+		throw new Error('Invalid Credentials');
+	}
 
-  // check if password matches
-  const isMatch = await user.matchPassword(password);
+	// check if password matches
+	const isMatch = await user.matchPassword(password);
 
+	if (!isMatch) {
+		res.status(401);
+		throw new Error('Invalid Credentials');
+	}
 
-  if (!isMatch) {
-    res.status(401);
-    throw new Error('Invalid Credentials');
-  }
-
-    if(user.status === false) {
-          res.status(401);
-    throw new Error('Your Account is not Verified. Please Verifiy Your Account');
-    }
-  res.status(200).json({
-     success: true,
-    message: "Logged in successfully",
-    access_token: genToken(user._id)
-  })
-
-})
+	if (user.status === false) {
+		res.status(401);
+		throw new Error(
+			'Your Account is not Verified. Please Verifiy Your Account'
+		);
+	}
+	res.status(200).json({
+		success: true,
+		message: 'Logged in successfully',
+		access_token: genToken(user._id),
+	});
+});
 
 /**
  * @desc Get user profile
@@ -144,19 +137,16 @@ exports.login = asyncHandler(async (req, res) => {
  * @route /api/v1/user/me
  * @access Private/User
  */
-exports.getMe = asyncHandler( async (req, res) => {
-   const user = await User.findById(req.user.id)
+exports.getMe = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.user.id);
 
-   if(user) {
-    return res.status(200).json({
-    success: true,
-    user
-  });
-   }
-
- 
-})
-
+	if (user) {
+		return res.status(200).json({
+			success: true,
+			user,
+		});
+	}
+});
 
 /**
  * @desc Update a user
@@ -165,29 +155,28 @@ exports.getMe = asyncHandler( async (req, res) => {
  * @access Public
  */
 exports.updateProfile = asyncHandler(async (req, res) => {
-   const { fullname, username } = req.body
+	const { fullname, username } = req.body;
 
-  try {
-    const user = await User.findById(req.user._id);
+	try {
+		const user = await User.findById(req.user._id);
 
-    if (user) {
-      user.fullname = fullname || user.fullname;
-      user.username = username || user.username;
-    }
+		if (user) {
+			user.fullname = fullname || user.fullname;
+			user.username = username || user.username;
+		}
 
-    const updatedUser = await user.save();
+		const updatedUser = await user.save();
 
-    return res.json({
-       success: true,
-      _id: updatedUser._id,
-      fullname: updatedUser.fullname,
-      username: updatedUser.username,
-      
-    });
-  } catch (error) {
-    res.status(404);
-    throw new Error("User not found");
-  }
+		return res.json({
+			success: true,
+			_id: updatedUser._id,
+			fullname: updatedUser.fullname,
+			username: updatedUser.username,
+		});
+	} catch (error) {
+		res.status(404);
+		throw new Error('User not found');
+	}
 });
 
 /**
@@ -196,54 +185,50 @@ exports.updateProfile = asyncHandler(async (req, res) => {
  * @route /api/user/forgotpassword
  * @access Public
  */
-exports.forgotPassword = asyncHandler( async (req, res) => {
-    const user = await User.findOne({ email: req.body.email });
+exports.forgotPassword = asyncHandler(async (req, res) => {
+	const user = await User.findOne({ email: req.body.email });
 
-  if (!user) {
-    res.status(404);
-    throw new Error('There is no user with that email');
-  }
+	if (!user) {
+		res.status(404);
+		throw new Error('There is no user with that email');
+	}
 
-  // Get reset token
-  const resetToken = user.getResetPasswordToken();
+	// Get reset token
+	const resetToken = user.getResetPasswordToken();
 
-  await user.save({ validateBeforeSave: false });
- 
+	await user.save({ validateBeforeSave: false });
 
-  // create message to pass
-  const text = `<h1>Password Reset Link</h1>
+	// create message to pass
+	const text = `<h1>Password Reset Link</h1>
         <h2>Hello ${user.username}</h2>
         <p>You are receiving this email because you (or someone else) has
          requested the reset of a password</p>
            <a href='kitchendiary.hng.tech/resetpassword/${resetToken}'> Click here to reset your password</a>
 
-        </div>`
+        </div>`;
 
+	// console.log(message)
+	try {
+		await sendEmail({
+			email: user.email,
+			subject: 'Password reset token',
+			message: text,
+		});
 
+		res.status(200).json({
+			success: true,
+			data: 'Email sent',
+		});
+	} catch (error) {
+		user.resetPasswordToken = undefined;
+		user.resetPasswordExpire = undefined;
 
-  // console.log(message)
-  try {
-    await sendEmail({
-      email: user.email,
-      subject: 'Password reset token',
-      message: text,
-    });
+		await user.save({ validateBeforeSave: false });
 
-    res.status(200).json({
-      success: true,
-      data: 'Email sent',
-    });
-  } catch (error) {
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpire = undefined;
-
-    await user.save({ validateBeforeSave: false });
-
-    res.status(500);
-    throw new Error('Email could not be sent');
-  }
-})
-
+		res.status(500);
+		throw new Error('Email could not be sent');
+	}
+});
 
 /**
  * @desc Reset User password
@@ -251,43 +236,70 @@ exports.forgotPassword = asyncHandler( async (req, res) => {
  * @route /api/user/resetpassword/:resettoken
  * @access Public
  */
+exports.resetPassword = asyncHandler(async (req, res) => {
+	//  Get hased token
+	const resetPasswordToken = crypto
+		.createHash('sha256')
+		.update(req.params.resettoken)
+		.digest('hex');
 
-exports.resetPassword = asyncHandler( async (req, res) => {
-   //  Get hased token
-  const resetPasswordToken = crypto
-    .createHash('sha256')
-    .update(req.params.resettoken)
-    .digest('hex');
+	const user = await User.findOne({
+		resetPasswordToken,
+		resetPasswordExpire: { $gt: Date.now() },
+	});
 
-  const user = await User.findOne({
-    resetPasswordToken,
-    resetPasswordExpire: { $gt: Date.now() },
-  });
+	if (!user) {
+		res.status(400);
+		throw new Error('Invalid token');
+	}
 
-  if (!user) {
-    res.status(400);
-    throw new Error('Invalid token');
-  }
+	// ?set new password
+	user.password = req.body.password;
+	user.resetPasswordToken = undefined;
+	user.resetPasswordExpire = undefined;
 
-  // ?set new password
-  user.password = req.body.password;
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpire = undefined;
+	await user.save();
 
-  await user.save();
+	return res.status(200).json({
+		msg: 'Password Reset Successfully. Please Login with your new password',
+	});
+});
 
-     return res.status(200).json({
-     msg: 'Password Reset Successfully. Please Login with your new password'
-     })
+/**
+ * @desc Update user 
+ * @route PUT
+ * @route /api/user/:id
+ * @access Private/Admin
+ */
+const UpdateUserByAdmin = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.params.id)
 
+	if(user) {
+		user.fullname = req.body.fullname || user.fullname,
+		user.username = req.body.username || user.username,
+		user.email = req.body.email || user.email,
+		user.isAdmin = req.body.isAdmin || user.isAdmin
+
+	const updatedUser = await user.save()
+	
+	res.status(200).json({
+		_id:  updatedUser._id,
+		fullname: updatedUser.fullname,
+		username: updatedUser.username,
+		email: updatedUser.email,
+		isAdmin: updatedUser.isAdmin
+	})
+	} else {
+		res.status(404)
+		throw new Error('User not found')
+
+	}
 })
 
 
-// Generate jwt token 
+// Generate jwt token
 const genToken = (id) => {
-   return jwt.sign({id}, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRE
-   })
-}
-
-
+	return jwt.sign({ id }, process.env.JWT_SECRET, {
+		expiresIn: process.env.JWT_EXPIRE,
+	});
+};

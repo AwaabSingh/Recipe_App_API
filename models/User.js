@@ -31,7 +31,12 @@ const userSchema = new Schema({
       type: Boolean,
       default: false,
     },
-    confirmationCode: String
+    confirmationCode: String,
+    isAdmin: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
 }, {timestamps: true });
 
 userSchema.pre('save', async function(next){
