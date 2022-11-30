@@ -16,16 +16,14 @@ const getPublishedRecipes = asyncHandler(async (req, res) => {
 			res.status(404);
 			throw new Error(`No Recepies found`);
 		}
-		
-		 recipes.map((recipe) => {
+
+		recipes.map((recipe) => {
 			if (recipe.isPublished === true) {
 				return res.status(200).json(recipes);
 			} else {
 				res.status(200).json({ msg: 'No Published Recipe yet' });
 			}
-		})
-
-		
+		});
 	} catch (error) {
 		res.status(400);
 		throw new Error(error.message);
@@ -309,11 +307,13 @@ const publishPremiumRecipe = asyncHandler(async (req, res) => {
 const getPublishPremiumRecipes = asyncHandler(async (req, res) => {
 	const recipes = await Recipe.find();
 
-	if (recipe.premiumStatus === true) {
-		return res.status(200).json(recipes);
-	} else {
-		res.status(200).json({ msg: 'No Premium Recipe Published yet' });
-	}
+	recipes.map((recipe) => {
+		if (recipe.premiumStatus === true) {
+			return res.status(200).json(recipes);
+		} else {
+			res.status(200).json({ msg: 'No Premium Recipe Published yet' });
+		}
+	});
 
 	res.status(400);
 	throw new Error('Error getting Published Premium Recipe ');
@@ -323,7 +323,7 @@ const getMyPremiumRecipe = asyncHandler(async (req, res) => {
 	try {
 		// Get user id
 		const userId = req.user.id;
-		recipe = await Recipe.find({ author: userId }).populate(
+		recipes = await Recipe.find({ author: userId }).populate(
 			'author',
 			'username'
 		);
@@ -334,14 +334,16 @@ const getMyPremiumRecipe = asyncHandler(async (req, res) => {
 		}
 
 		// Check for owner recipe
-		if (recipe.author.toString() !== req.user.id) {
+		if (recipes.author.toString() !== req.user.id) {
 			res.status(401);
 			throw new Error('User not authorized');
 		}
 
-		if (recipe.status === 'premium') {
-			return res.status(200).json(recipe);
-		}
+		recipes.map((recipe) => {
+			if (recipe.status === 'premium') {
+				return res.status(200).json(recipes);
+			}
+		});
 	} catch (error) {
 		res.status(500);
 		throw new Error(error.message);
