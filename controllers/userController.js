@@ -16,9 +16,11 @@ const { v4: uuidv4 } = require('uuid');
  */
 exports.register = asyncHandler(async (req, res) => {
   try {
-    const { fullname, username, email, password } = req.body
+    const { fullname, username, email, password,confirmationCode } = req.body
 
     const  verifyToken =  uuidv4()
+
+    
  
     const userExist = await User.findOne({ email })
 
@@ -27,6 +29,7 @@ exports.register = asyncHandler(async (req, res) => {
     throw new Error('User already Exists')
    }
 
+ 
    const user = await User.create({
       fullname,
       username,
@@ -36,11 +39,11 @@ exports.register = asyncHandler(async (req, res) => {
    })
 
    if(user) {
-   
+  
        const text = `<h1>Email Confirmation</h1>
         <h2>Hello ${username}</h2>
         <p>Verify your email address to complete the signup and login to your account to Kitchen Diary</p>
-        <a https://kitchendiary.hng.tech/confirm/${confirmationCode}> Click here</a>
+        <a href='https://kitchendiary.hng.tech/confirm/${user.confirmationCode}'> Click here</a>
 
         </div>`
 
@@ -51,7 +54,7 @@ exports.register = asyncHandler(async (req, res) => {
     });
 
   res.status(201).json({
-    msg: 'Account Created Successfully! Please check your mail'
+    msg: 'Account Created Successfully! Please check your mail',
   })
    }
 
