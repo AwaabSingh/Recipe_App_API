@@ -56,7 +56,10 @@ const recipeSchema = new mongoose.Schema(
 			],
 			required: true,
 		},
-		votes: { type: [String], default: [] },
+		votes: { 
+			type: [String],
+			 default: []
+		 },
 		images: {
 			type: [
 				{
@@ -73,7 +76,6 @@ const recipeSchema = new mongoose.Schema(
 		},
 		price: {
 			type: Number,
-			required: true,
 			default: 0,
 		},
 		premiumStatus: {

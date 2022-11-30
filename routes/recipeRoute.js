@@ -28,6 +28,5 @@ router.delete('/:id', authenticate, deleteRecipe);
 router.delete('/:id/print', authenticate, printRecipe);
 router.patch('/:id/publish', authenticate, isPublished);
 router.patch('/:id/vote', authenticate, voteRecipe);
-router.patch('/:id/publish-premium', authenticate, admin, publishPremiumRecipe); //worked on
 
 module.exports = router;

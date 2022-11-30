@@ -16,12 +16,16 @@ const getPublishedRecipes = asyncHandler(async (req, res) => {
 			res.status(404);
 			throw new Error(`No Recepies found`);
 		}
+		
+		 recipes.map((recipe) => {
+			if (recipe.isPublished === true) {
+				return res.status(200).json(recipes);
+			} else {
+				res.status(200).json({ msg: 'No Published Recipe yet' });
+			}
+		})
 
-		if (recipes.isPublished === true) {
-			return res.status(200).json(recipes);
-		} else {
-			res.status(200).json({ msg: 'No Published Recipe yet' });
-		}
+		
 	} catch (error) {
 		res.status(400);
 		throw new Error(error.message);
