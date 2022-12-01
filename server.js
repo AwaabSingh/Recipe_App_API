@@ -53,11 +53,13 @@ app.use(cors())
 // Routes imports
 const userRoutes = require('./routes/userRoutes')
 const recipeRoutes = require('./routes/recipeRoute')
+const adminRoutes = require('./routes/adminRoute');
 
 
 // Routes configurations
 app.use('/api/v1/user', userRoutes)
 app.use('/api/v1/recipe', recipeRoutes)
+app.use('/api/v1/admin', adminRoutes);
 
 // Db connectio 
 connectDB()
