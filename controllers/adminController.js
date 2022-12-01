@@ -31,3 +31,31 @@ exports.createUser = asyncHandler(async (req, res) => {
 		email: user.email,
 	});
 });
+
+/**
+ * @desc Update user
+ * @route PUT
+ * @route /api/user/:id
+ * @access Private/Admin
+ */
+exports.UpdateUserByAdmin = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.params.id);
+
+	if (user) {
+		user.fullname = req.body.fullname || user.fullname;
+		user.username = req.body.username || user.username;
+		user.isAdmin = req.body.isAdmin;
+
+		const updatedUser = await user.save();
+
+		res.json({
+			_id: updatedUser._id,
+			name: updatedUser.name,
+			email: updatedUser.email,
+			isAdmin: updatedUser.isAdmin,
+		});
+	} else {
+		res.status(404);
+		throw new Error('User not found');
+	}
+});

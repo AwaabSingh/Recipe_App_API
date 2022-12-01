@@ -265,36 +265,7 @@ exports.resetPassword = asyncHandler(async (req, res) => {
 	});
 });
 
-/**
- * @desc Update user 
- * @route PUT
- * @route /api/user/:id
- * @access Private/Admin
- */
-const UpdateUserByAdmin = asyncHandler(async (req, res) => {
-	const user = await User.findById(req.params.id)
 
-	if(user) {
-		user.fullname = req.body.fullname || user.fullname,
-		user.username = req.body.username || user.username,
-		user.email = req.body.email || user.email,
-		user.isAdmin = req.body.isAdmin || user.isAdmin
-
-	const updatedUser = await user.save()
-	
-	res.status(200).json({
-		_id:  updatedUser._id,
-		fullname: updatedUser.fullname,
-		username: updatedUser.username,
-		email: updatedUser.email,
-		isAdmin: updatedUser.isAdmin
-	})
-	} else {
-		res.status(404)
-		throw new Error('User not found')
-
-	}
-})
 
 
 // Generate jwt token
