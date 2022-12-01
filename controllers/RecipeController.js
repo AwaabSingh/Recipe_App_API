@@ -17,13 +17,41 @@ const getPublishedRecipes = asyncHandler(async (req, res) => {
 			throw new Error(`No Recepies found`);
 		}
 
-		recipes.map((recipe) => {
-			if (recipe.isPublished === true) {
-				return res.status(200).json(recipes);
-			} else {
-				res.status(200).json({ msg: 'No Published Recipe yet' });
-			}
-		});
+
+		const publishedRecipe = recipes.filter(
+			(recipe) => recipe.isPublished === true
+		)
+
+		if(!publishedRecipe) {
+			res.status(200).json({ msg: 'No Published Recipe yet' });
+		}
+
+		 res.status(200).json(recipes);
+	
+	} catch (error) {
+		res.status(400);
+		throw new Error(error.message);
+	}
+});
+
+/**
+ * @desc Get Recepie list
+ * @route GET
+ * @route /api/getAllRecipes
+ * @access Public
+ */
+ const getAllRecipes = asyncHandler(async (req, res) => {
+	try {
+		const recipes = await Recipe.find().populate('author', 'username');
+		if (!recipes) {
+			res.status(404);
+			throw new Error(`No Recepies found`);
+		}
+
+
+		
+		 res.status(200).json(recipes);
+	
 	} catch (error) {
 		res.status(400);
 		throw new Error(error.message);
@@ -363,4 +391,5 @@ module.exports = {
 	publishPremiumRecipe,
 	getPublishPremiumRecipes,
 	getMyPremiumRecipe,
+	getAllRecipes
 };

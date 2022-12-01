@@ -1,6 +1,5 @@
-const express = require('express')
-const router = express.Router()
- 
+const express = require('express');
+const router = express.Router();
 
 //this route is for api documentation using swaggerui
 
@@ -8,7 +7,7 @@ const router = express.Router()
  * @swagger
  * components:
  *     securitySchemes:
- *         bearerAuth:            
+ *         bearerAuth:
  *             type: http
  *             scheme: bearer
  *             bearerFormat: JWT
@@ -18,7 +17,7 @@ const router = express.Router()
  *             required:
  *                 - fullname
  *                 - username
- *                 - email
+ *                 - email 
  *                 - password
  *                 - createdAt
  *                 - updatedAt
@@ -31,7 +30,7 @@ const router = express.Router()
  *                      description: The username email of the user
  *                 email:
  *                      type: string
- *                      description: The email of the user
+ *                      description: The email of the user 
  *                 password:
  *                      type: string
  *                      description: The encrypted password of the user
@@ -40,6 +39,7 @@ const router = express.Router()
  *                 username: JuneDoe
  *                 email: junedoe@ymail.com
  *                 password: kdfjd495ubfik49b5ifb3obfo3kf
+ *
  *         Recipe:
  *             type: object
  *             required:
@@ -64,7 +64,7 @@ const router = express.Router()
  *                      description: The url of the image
  *                 description:
  *                      type: string
- *                      description: The description of the recipe 
+ *                      description: The description of the recipe
  *                 utensils:
  *                      type: array
  *                      description: List of all utensils needed
@@ -94,9 +94,9 @@ const router = express.Router()
  *                 email: [water leaves, cow meat, eru leaves, canda meat, dry fish, water fufu, red oil ]
  *                 steps: [{step: 1, text: boil the meat}, {step: 2, text: wash the water leaves and eru leaves}]
  *                 votes: [y,y,y,y,y,y,y,y,y,y,y,y,y,y,y,y,y,y]
- *         
- *         
- *     response: 
+ *
+ *
+ *     response:
  *         Recipe:
  *             type: object
  *             required:
@@ -116,7 +116,7 @@ const router = express.Router()
  *                      description: The url of the image
  *                 description:
  *                      type: string
- *                      description: The description of the recipe 
+ *                      description: The description of the recipe
  *                 utensils:
  *                      type: array
  *                      description: List of all utensils needed
@@ -134,8 +134,7 @@ const router = express.Router()
  *             properties:
  *                 message:
  *                      type: string
-*/
-
+ */
 
 /**
  * @swagger
@@ -145,8 +144,6 @@ const router = express.Router()
  *     - name: recipes
  *       description: The recipe managing api
  */
-
-
 
 /**
  * @swagger
@@ -185,7 +182,7 @@ const router = express.Router()
  *                     application/json:
  *                         schema:
  *                             $ref: '#/components/response/Error'
-* /api/v1/user/confirm/{confirmationCode}:
+ * /api/v1/user/confirm/{confirmationCode}:
  *      get:
  *         summary: Verify user account
  *         tags:
@@ -267,7 +264,7 @@ const router = express.Router()
  *                     application/json:
  *                         schema:
  *                             $ref: '#/components/response/Error'
- * 
+ *
  * /api/v1/user/me:
  *     get:
  *         summary: gets the authenticated user info
@@ -324,8 +321,8 @@ const router = express.Router()
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
- * 
- *       
+ *
+ *
  * /api/v1/user/forgotpassword:
  *      post:
  *         summary: forgot password reset
@@ -365,12 +362,12 @@ const router = express.Router()
  *                          schema:
  *                              $ref: '#/components/response/Error'
  *             '500':
- *                 description: Internal server error 
+ *                 description: Internal server error
  *                 content:
  *                     application/json:
  *                         schema:
  *                             $ref: '#/components/response/Error'
- * 
+ *
  * /api/v1/user/resetpassword/{resettoken}:
  *      put:
  *         summary: forgot password reset
@@ -402,7 +399,6 @@ const router = express.Router()
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
- *                             
  */
 
 /**
@@ -451,7 +447,7 @@ const router = express.Router()
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
- * 
+ *
  * /api/v1/recipe/{id}:
  *     get:
  *         summary: finds a recipe by id
@@ -484,7 +480,7 @@ const router = express.Router()
  *             - bearerAuth: []
  *         parameters:
  *             - in: path
- *               name: id  
+ *               name: id
  *               required: true
  *         schema:
  *           type: string
@@ -518,7 +514,7 @@ const router = express.Router()
  *                     application/json:
  *                         schema:
  *                             $ref: '#/components/response/Error'
- * 
+ *
  *     delete:
  *         summary: Authenticated user Deletes a recipe by id
  *         tags:
@@ -554,7 +550,7 @@ const router = express.Router()
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
- * 
+ *
  * /api/v1/recipe/{id}/publish:
  *     patch:
  *         summary: finds a recipe by id and publishes it
@@ -564,7 +560,7 @@ const router = express.Router()
  *             - bearerAuth: []
  *         parameters:
  *             - in: path
- *               name: id  
+ *               name: id
  *               required: true
  *         schema:
  *           type: string
@@ -587,21 +583,21 @@ const router = express.Router()
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
- * 
+ *
  *             '401':
  *                 description: User not authorized
  *                 content:
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
-  * /api/v1/recipe/myrecipe:
+ * /api/v1/recipe/myrecipe:
  *     get:
  *         summary: Get all recipe for a specify user (authenticated)
  *         tags:
  *             - recipes
  *         security:
  *             - bearerAuth: []
- *        
+ *
  *         schema:
  *           type: string
  *         responses:
@@ -623,14 +619,14 @@ const router = express.Router()
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
- * 
+ *
  *             '401':
  *                 description: User not authorized
  *                 content:
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
- * 
+ *
  * /api/v1/recipe/{id}/vote:
  *     patch:
  *         summary: finds a recipe by id and vote for it
@@ -640,7 +636,7 @@ const router = express.Router()
  *             - bearerAuth: []
  *         parameters:
  *             - in: path
- *               name: id  
+ *               name: id
  *               required: true
  *         schema:
  *           type: string
@@ -657,14 +653,16 @@ const router = express.Router()
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
- * 
+ *
  *             '401':
  *                 description: User not authorized
  *                 content:
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
- * 
+ *
+ *
+ *
  */
 
 module.exports = router;

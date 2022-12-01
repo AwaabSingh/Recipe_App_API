@@ -265,6 +265,54 @@ exports.resetPassword = asyncHandler(async (req, res) => {
 	});
 });
 
+/**
+ * @desc Update a user
+ * @route POST
+ * @route /api/v1/user/login
+ * @access Public
+ */
+ exports.updateProfilePhoto = asyncHandler(async (req, res) => {
+	const { fullname } = req.body;
+  
+	try {
+	  const user = await User.findById(req.user.id);
+	  // if user exist
+	  if (user && !req.file) {
+		user.fullname = fullname;
+  
+		// save updated user
+		const updatedUser = await user.save();
+  
+		res.status(200).json({
+		  success: true,
+		  message: "Profile Updated Successfully",
+		  user: updatedUser,
+		});
+	  }
+	  // if user exist and image is uploaded
+	  else if (user && user.profilePhoto) {
+		const fileName = req.file.filename;
+		const basePath = `${req.protocol}://${req.get("host")}/uploads/images/`;
+		user.fullname = fullname;
+		user.profilePhoto = `${basePath}${fileName}`;
+  
+		// save updated user
+		const updatedUser = await user.save();
+  
+		res.status(200).json({
+		  success: true,
+		  message: "Profile Updated Successfully",
+		  user: updatedUser,
+		});
+	  } else {
+		res.status(404);
+		throw new Error("User not found");
+	  }
+	} catch (error) {
+	  res.status(400);
+	  throw new Error(error.message);
+	}
+  });
 
 
 

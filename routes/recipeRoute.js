@@ -12,6 +12,7 @@ const {
 	publishPremiumRecipe,
 	getPublishPremiumRecipes,
 	getMyPremiumRecipe,
+	getAllRecipes,
 } = require('../controllers/RecipeController');
 const { authenticate, admin } = require('../middlewares/authMiddleware');
 
@@ -20,6 +21,7 @@ const router = express.Router();
 router.get('/', getPublishedRecipes);
 router.get('/premium-recipe', getPublishPremiumRecipes); //worked on
 router.get('/myrecipe', authenticate, userRecipes);
+router.get('/allRecipes', authenticate, admin, getAllRecipes) //worked on for david
 router.get('/mypremium-recipe', authenticate, getMyPremiumRecipe); //worked on
 router.get('/:id', getRecipe);
 router.put('/:id', authenticate, updateRecipe);
@@ -28,5 +30,6 @@ router.delete('/:id', authenticate, deleteRecipe);
 router.delete('/:id/print', authenticate, printRecipe);
 router.patch('/:id/publish', authenticate, isPublished);
 router.patch('/:id/vote', authenticate, voteRecipe);
+
 
 module.exports = router;
