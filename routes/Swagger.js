@@ -318,6 +318,7 @@ const router = express.Router();
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
+ *
  *     patch:
  *         summary: update the authenticated user info
  *         security:
@@ -354,7 +355,6 @@ const router = express.Router();
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
- *
  *
  * /api/v1/user/forgotpassword:
  *      post:
