@@ -12,19 +12,24 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "recipe Api",
+      title: "Kitchen Diary",
       version: "1.0.0",
       description: "An api for printing recipes App"
     },
     servers: [
       {
-        //update to production url
-        url: 'https://recipe-app-42aq.onrender.com'
-        // url: 'http://localhost:4000'
-//         url: 'https://colorful-fedora-clam.cyclic.app'
+        url: 'https://recipe-app-42aq.onrender.com',
+        description: "Staging Server"
 
+
+      },
+      {
+        //update to production url
+       url: 'http://localhost:4000',
+        description: "Development Server"
 
       }
+     
     ]
   },
   apis: ["./routes/*.js"]

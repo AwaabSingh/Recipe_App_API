@@ -1,4 +1,5 @@
 const asyncHandler = require('express-async-handler');
+const Recipe = require('../models/Recipe');
 const User = require('../models/User');
 
 /**
@@ -69,15 +70,15 @@ exports.UpdateUserByAdmin = asyncHandler(async (req, res) => {
 // delete user
 exports.deleteUser = asyncHandler(async (req, res) => {
 	const user = await User.findById(req.params.id);
-  
+
 	if (user) {
-	  await user.remove();
-	  res.status(200).json({ message: "User removed" });
+		await user.remove();
+		res.status(200).json({ message: 'User removed' });
 	} else {
-	  res.status(404);
-	  throw new Error("User not found");
+		res.status(404);
+		throw new Error('User not found');
 	}
-  });
+});
 
 /**
  * @desc Add a recipe by Admin
@@ -85,7 +86,7 @@ exports.deleteUser = asyncHandler(async (req, res) => {
  * @route api/v1/recipe
  * @access Private
  */
- exports.createRecipeByAdmin = asyncHandler(async (req, res) => {
+exports.createRecipeByAdmin = asyncHandler(async (req, res) => {
 	//  Get user id and add to the body field
 	try {
 		req.body.user = req.user.id;
@@ -130,6 +131,86 @@ exports.deleteUser = asyncHandler(async (req, res) => {
 			const createdRecipe = await recipe.save();
 			res.status(201).json(createdRecipe);
 		}
+	} catch (error) {
+		res.status(400);
+		throw new Error(error.message);
+	}
+});
+
+/**
+ * @desc Get Recepie list
+ * @route GET
+ * @route /api/getAllRecipes
+ * @access Public
+ */
+exports.getAllRecipes = asyncHandler(async (req, res) => {
+	try {
+		const recipes = await Recipe.find().populate('author', 'username');
+		if (!recipes) {
+			res.status(404);
+			throw new Error(`No Recepies found`);
+		}
+
+		res.status(200).json(recipes);
+	} catch (error) {
+		res.status(400);
+		throw new Error(error.message);
+	}
+});
+
+exports.deleteRecipe = asyncHandler(async (req, res) => {
+	try {
+		const recipe = await Recipe.findById(req.params.id);
+
+		if (!recipe) {
+			res.status(400);
+			throw new Error('Recipe is not found');
+		}
+
+		//  check for user
+		if (req.user.isAdmin === false) {
+			res.status(401);
+			throw new Error('User not authorized to delete recipe');
+		}
+
+		await recipe.remove();
+
+		res
+			.status(200)
+			.json({ id: req.params.id, msg: 'Recipe Deleted Successfully' });
+	} catch (error) {
+		res.status(500);
+		throw new Error(error.message);
+	}
+});
+
+
+exports.updateRecipe = asyncHandler(async (req, res) => {
+	try {
+		const recipe = await Recipe.findById(req.params.id);
+
+		if (!recipe) {
+			res.status(400);
+			throw new Error('Recipe not found');
+		}
+
+		if (!req.user) {
+			req.status(401);
+			throw new Error('User not found');
+		}
+
+		// check for owner Recipe
+		if (recipe.author.toString() !== req.user.id) {
+			res.status(401);
+			throw new Error('User not authorized');
+		}
+		const updaterecipe = await Recipe.findByIdAndUpdate(
+			req.params.id,
+			req.body,
+			{ new: true }
+		);
+
+		res.status(200).json(updaterecipe);
 	} catch (error) {
 		res.status(400);
 		throw new Error(error.message);

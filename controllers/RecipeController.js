@@ -17,41 +17,15 @@ const getPublishedRecipes = asyncHandler(async (req, res) => {
 			throw new Error(`No Recepies found`);
 		}
 
-
 		const publishedRecipe = recipes.filter(
 			(recipe) => recipe.isPublished === true
-		)
+		);
 
-		if(!publishedRecipe) {
+		if (!publishedRecipe) {
 			res.status(200).json({ msg: 'No Published Recipe yet' });
 		}
 
-		 res.status(200).json(recipes);
-	
-	} catch (error) {
-		res.status(400);
-		throw new Error(error.message);
-	}
-});
-
-/**
- * @desc Get Recepie list
- * @route GET
- * @route /api/getAllRecipes
- * @access Public
- */
- const getAllRecipes = asyncHandler(async (req, res) => {
-	try {
-		const recipes = await Recipe.find().populate('author', 'username');
-		if (!recipes) {
-			res.status(404);
-			throw new Error(`No Recepies found`);
-		}
-
-
-		
-		 res.status(200).json(recipes);
-	
+		res.status(200).json(recipes);
 	} catch (error) {
 		res.status(400);
 		throw new Error(error.message);
@@ -309,6 +283,26 @@ const userRecipes = asyncHandler(async (req, res) => {
 	}
 });
 
+const highestVoteRecipe = asyncHandler(async (req, res) => {
+	try {
+		const recipes = await Recipe.find().populate('author', 'username');
+
+		if (!recipes) {
+			res.status(404);
+			throw new Error(`No Recepies found`);
+		}
+		// sort the array base on the highest vote
+		recipes.sort(function (a, b) {
+			return b.votes.length - a.votes.length;
+		});
+
+		res.status(201).json(recipes);
+	} catch (error) {
+		res.status(400);
+		throw new Error(error.message);
+	}
+});
+
 const publishPremiumRecipe = asyncHandler(async (req, res) => {
 	try {
 		const recipe = await Recipe.findById(req.params.id);
@@ -391,5 +385,5 @@ module.exports = {
 	publishPremiumRecipe,
 	getPublishPremiumRecipes,
 	getMyPremiumRecipe,
-	getAllRecipes
+	highestVoteRecipe,
 };

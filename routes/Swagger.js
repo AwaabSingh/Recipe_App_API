@@ -12,12 +12,12 @@ const router = express.Router();
  *             scheme: bearer
  *             bearerFormat: JWT
  *     schemas:
- *         User:
+ *         Admin:
  *             type: object
  *             required:
  *                 - fullname
  *                 - username
- *                 - email 
+ *                 - email
  *                 - password
  *                 - createdAt
  *                 - updatedAt
@@ -30,7 +30,35 @@ const router = express.Router();
  *                      description: The username email of the user
  *                 email:
  *                      type: string
- *                      description: The email of the user 
+ *                      description: The email of the user
+ *                 password:
+ *                      type: string
+ *                      description: The encrypted password of the user
+ *             example:
+ *                 fullname: June Doe
+ *                 username: JuneDoe
+ *                 email: junedoe@ymail.com
+ *                 password: kdfjd495ubfik49b5ifb3obfo3kf
+ *
+ *         User:
+ *             type: object
+ *             required:
+ *                 - fullname
+ *                 - username
+ *                 - email
+ *                 - password
+ *                 - createdAt
+ *                 - updatedAt
+ *             properties:
+ *                 fullname:
+ *                      type: string
+ *                      description: The full name of the user
+ *                 username:
+ *                      type: string
+ *                      description: The username email of the user
+ *                 email:
+ *                      type: string
+ *                      description: The email of the user
  *                 password:
  *                      type: string
  *                      description: The encrypted password of the user
@@ -52,6 +80,7 @@ const router = express.Router();
  *                 - ispublished
  *                 - ingredients
  *                 - steps
+ *                 - templateId
  *             properties:
  *                 _id:
  *                      type: string
@@ -90,6 +119,7 @@ const router = express.Router();
  *                 description: The best meal ever
  *                 utensils: [bowl, pots, cooking spoon]
  *                 author: June Doe
+ *                 templateId: 1000
  *                 ispublished: false
  *                 email: [water leaves, cow meat, eru leaves, canda meat, dry fish, water fufu, red oil ]
  *                 steps: [{step: 1, text: boil the meat}, {step: 2, text: wash the water leaves and eru leaves}]
@@ -107,6 +137,7 @@ const router = express.Router();
  *                 - ispublished
  *                 - ingredients
  *                 - steps
+ *                 - templateId
  *             properties:
  *                 title:
  *                      type: string
@@ -143,6 +174,8 @@ const router = express.Router();
  *       description: The User managing api
  *     - name: recipes
  *       description: The recipe managing api
+ *     - name: Admins
+ *       description: Routes for Admin functionalities
  */
 
 /**
@@ -431,7 +464,7 @@ const router = express.Router();
  *                          schema:
  *                              $ref: '#/components/response/Error'
  *     get:
- *         summary: gets a list of all recipes
+ *         summary: gets a published list of all recipes
  *         tags:
  *             - recipes
  *         responses:
@@ -626,6 +659,42 @@ const router = express.Router();
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
+ * /api/v1/recipe/highest-vote:
+ *     get:
+ *         summary: Get Highest voted recipes
+ *         tags:
+ *             - recipes
+ *         security:
+ *             - bearerAuth: []
+ *
+ *         schema:
+ *           type: string
+ *         responses:
+ *             '200':
+ *                description: Success
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            type: object
+ *                            properties:
+ *                                isPublished:
+ *                                    type: boolean
+ *                                message:
+ *                                     type: string
+ *                                     description: success message.
+ *             '400':
+ *                 description: No recipe found with id
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ *
+ *             '401':
+ *                 description: User not authorized
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
  *
  * /api/v1/recipe/{id}/vote:
  *     patch:
@@ -660,8 +729,309 @@ const router = express.Router();
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
- *
- *
+ */
+
+/**
+ * @swagger
+ * /api/v1/admin/create-user:
+ *     post:
+ *         summary: Create a user account by admins
+ *         tags:
+ *             - Admins
+ *         security:
+ *             - bearerAuth: []
+ *         requestBody:
+ *             description: a json with all fields
+ *             required: true
+ *             content:
+ *                 application/json:
+ *                     schema:
+ *                          $ref: '#/components/schemas/Admin'
+ *         responses:
+ *             '201':
+ *                description: Created user successfully
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            type: object
+ *                            properties:
+ *                                message:
+ *                                     type: string
+ *                                     description: success message.
+ *             '400':
+ *                 description: User already exist
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ *    
+ * /api/v1/admin/update-user/{id}:
+ *     put:
+ *         summary: Update User and can also make user an admin
+ *         tags:
+ *             - Admins
+ *         security:
+ *             - bearerAuth: []
+ *         parameters:
+ *             - in: path
+ *               name: id
+ *               required: true
+ *         requestBody:
+ *             description: a json with all fields
+ *             required: true
+ *             content:
+ *                 application/json:
+ *                     schema: {
+ *                         type: object,
+ *                         example: {
+ *                              fullname: John Doe,
+ *                              username: JDoe,
+ *                              isAdmin: true
+ *                            }
+ *                      }
+ *         responses:
+ *             '201':
+ *                description: Created user successfully
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            type: object
+ *                            properties:
+ *                                message:
+ *                                     type: string
+ *                                     description: success message.
+ *             '400':
+ *                 description: User already exist
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ * /api/v1/admin/delete-user/{id}:
+ *     delete:
+ *         summary: Update User and can also make user an admin
+ *         tags:
+ *             - Admins
+ *         security:
+ *             - bearerAuth: []
+ *         parameters:
+ *             - in: path
+ *               name: id
+ *               required: true
+ *         responses:
+ *             '201':
+ *                description: User removed
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            type: object
+ *                            properties:
+ *                                message:
+ *                                     type: string
+ *                                     description: success message.
+ *             '400':
+ *                 description: User already exist
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ * /api/v1/admin/create-recipe:
+ *     post:
+ *         summary: Creating Recipe by an admin
+ *         tags:
+ *             - Admins
+ *         security:
+ *             - bearerAuth: []
+ *         requestBody:
+ *             description: a json with all fields
+ *             required: true
+ *             content:
+ *                 application/json:
+ *                     schema: {
+ *                         type: object,
+ *                         example: {
+ *                              title: "Ghana Jollof",
+			images: [],
+			description: "Learn how to cook Ghnan Jollof rice ",
+			utensils,
+			ingredients:  [
+        {
+            "id": 0,
+            "value": "2 boneless skinless chicken breasts"
+        },
+        {
+            "id": 1,
+            "value": "Kosher salt"
+        },
+        {
+            "id": 2,
+            "value": "Extra-virgin olive oil"
+        }
+    ],
+			steps: [
+                 
+        {
+            "id": 1,
+            "value": "In a blender, combine tomatoes, red peppers, chopped onions and scotch bonnets with 2 cups of stock, blend till smooth for 2 minutes and pour into a large pot/pan and boil for 10-12 minutes."
+        },
+        {
+            "id": 2,
+            "value": "In a large pan, heat oil and add sliced onions. Season with salt and stir fry for 2-3 minutes on medium heat then add the tomatoe paste and stir fry for two minutes heat. Add thetomato pepper mixyure and set on medium heat for 10-12 minutes."
+        }
+            ],
+			status: "free",
+			price,
+			coverImage: "",
+			preparationTime: "60 mins",
+			yield: "",
+			difficulty: "easy",
+			templateId: 100,
+ *                            }
+ *                      }
+ *         responses:
+ *             '201':
+ *                description: Created recipe successfully
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            $ref: '#/components/schemas/Recipe'
+ *             '500':
+ *                 description: Something went  wrong
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ * /api/v1/admin/allRecipes:
+ *     get:
+ *         summary: finds a recipe by id in the database
+ *         security:
+ *             - bearerAuth: []
+ *         tags:
+ *             - Admins
+ *         schema:
+ *           AnyValue: {}
+ *         responses:
+ *             '200':
+ *                 description: Success
+ *                 content:
+ *                     application/json:
+ *                         schema:
+ *                             #ref: '#/components/schemas/Recipe
+ *             '404':
+ *                 description: No recipe found with id
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ * /api/v1/admin/delete-recipe/{id}:
+ *     delete:
+ *         summary: Update User and can also make user an admin
+ *         tags:
+ *             - Admins
+ *         security:
+ *             - bearerAuth: []
+ *         parameters:
+ *             - in: path
+ *               name: id
+ *               required: true
+ *         responses:
+ *             '201':
+ *                description: Recipe Deleted Successfully
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            type: object
+ *                            properties:
+ *                                message:
+ *                                     type: string
+ *                                     description: success message.
+ *             '400':
+ *                 description: User already exist
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ * /api/v1/admin/update-recipe/{id}:
+ *       put:
+ *         summary: Update Recipe
+ *         tags:
+ *             - Admins
+ *         security:
+ *             - bearerAuth: []
+ *         parameters:
+ *             - in: path
+ *               name: id
+ *               required: true
+ *         schema:
+ *           type: string
+ *         requestBody:
+ *             description: a json with all fields
+ *             required: true
+ *             content:
+ *                 application/json:
+ *                      schema: {
+ *                         type: object,
+ *                         example: {
+ *                              title: "Ghana Jollof",
+			images: [],
+			description: "Learn how to cook Ghnan Jollof rice ",
+			utensils,
+			ingredients:  [
+        {
+            "id": 0,
+            "value": "2 boneless skinless chicken breasts"
+        },
+        {
+            "id": 1,
+            "value": "Kosher salt"
+        },
+        {
+            "id": 2,
+            "value": "Extra-virgin olive oil"
+        }
+    ],
+			steps: [
+                 
+        {
+            "id": 1,
+            "value": "In a blender, combine tomatoes, red peppers, chopped onions and scotch bonnets with 2 cups of stock, blend till smooth for 2 minutes and pour into a large pot/pan and boil for 10-12 minutes."
+        },
+        {
+            "id": 2,
+            "value": "In a large pan, heat oil and add sliced onions. Season with salt and stir fry for 2-3 minutes on medium heat then add the tomatoe paste and stir fry for two minutes heat. Add thetomato pepper mixyure and set on medium heat for 10-12 minutes."
+        }
+            ],
+			status: "free",
+			price,
+			coverImage: "",
+			preparationTime: "60 mins",
+			yield: "",
+			difficulty: "easy",
+			templateId: 100,
+ *                            }
+ *                      }
+ *         responses:
+ *             '200':
+ *                description: success
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            type: object
+ *                            properties:
+ *                                message:
+ *                                     type: string
+ *                                     description: success message.
+ *             '400':
+ *                 description: Recipe not found
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ *             '401':
+ *                 description: user not authorized
+ *                 content:
+ *                     application/json:
+ *                         schema:
+ *                             $ref: '#/components/response/Error'
  *
  */
 
