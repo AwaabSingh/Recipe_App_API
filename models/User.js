@@ -19,7 +19,7 @@ const userSchema = new Schema(
     profilePhoto: {
       type: String,
       default:
-        "https://res.cloudinary.com/dzcmadjl1/image/upload/v1597150008/avatars/default-avatar.png",
+        "https://res.cloudinary.com/demo/image/upload/w_100,h_100,c_thumb,g_face,r_20,d_avatar.png/non_existing_id.png",
     },
     password: {
       type: String,
