@@ -199,11 +199,7 @@ exports.updateRecipe = asyncHandler(async (req, res) => {
 			throw new Error('User not found');
 		}
 
-		// check for owner Recipe
-		if (recipe.author.toString() !== req.user.id) {
-			res.status(401);
-			throw new Error('User not authorized');
-		}
+		
 		const updaterecipe = await Recipe.findByIdAndUpdate(
 			req.params.id,
 			req.body,
