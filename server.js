@@ -6,6 +6,7 @@ const { errorHandler, notFound } = require("./middlewares/errorMiddleware");
 const { connectDB } = require("./config/db");
 const swaggerUI = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
+const path = require("path");
 
 //options object for swaggerjs
 const options = {
@@ -37,7 +38,10 @@ const app = express();
 
 //setting up swagger doc
 app.use("/api/v1/docs", swaggerUI.serve, swaggerUI.setup(specs));
-app.use("uploads/images", express.static(__dirname + "/uploads/images"));
+app.use(
+  "/uploads/images",
+  express.static(path.join(__dirname, "uploads/images"))
+);
 
 dotenv.config();
 app.use(express.json());
