@@ -42,7 +42,6 @@ const recipeSchema = new mongoose.Schema(
 		},
 		templateId: {
 			type: Number,
-			// required: true,
 		},
 		ingredients: {
 			type: [
