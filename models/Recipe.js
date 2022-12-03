@@ -25,6 +25,12 @@ const recipeSchema = new mongoose.Schema(
 		utensils: {
 			type: [String],
 		},
+		calories: {
+			type: String,
+		},
+		howToServe: {
+			type: String,
+		},
 		author: {
 			type: mongoose.Schema.ObjectId,
 			ref: 'User',
@@ -36,12 +42,13 @@ const recipeSchema = new mongoose.Schema(
 		},
 		templateId: {
 			type: Number,
-			required: true,
 		},
 		ingredients: {
 			type: [
 				{
 					id: { type: String, required: true },
+					imageUrl:{type: String},
+					quantity:{type: String},
 					value: { type: String, required: true },
 				},
 			],
@@ -56,10 +63,10 @@ const recipeSchema = new mongoose.Schema(
 			],
 			required: true,
 		},
-		votes: { 
+		votes: {
 			type: [String],
-			 default: []
-		 },
+			default: [],
+		},
 		images: {
 			type: [
 				{
@@ -80,8 +87,27 @@ const recipeSchema = new mongoose.Schema(
 		},
 		premiumStatus: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
+		categories: {
+			type: [String],
+			default: [],
+		},
+		isPurchased: {
+			type: Boolean,
+			default: false,
+		},
+		servedWith: {
+			type: [
+				{
+					content: { type: String },
+					imageUrl: { type: String },
+				},
+			],
+			imageUrl:String,
+			content:String,
+			type:String
+		},
 	},
 	{ timestamps: true }
 );
