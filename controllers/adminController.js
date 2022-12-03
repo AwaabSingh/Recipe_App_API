@@ -194,9 +194,9 @@ exports.updateRecipe = asyncHandler(async (req, res) => {
 			throw new Error('Recipe not found');
 		}
 
-		if (!req.user) {
+		if (req.user.isAdmin === false) {
 			req.status(401);
-			throw new Error('User not found');
+			throw new Error('User not authorized as an admin');
 		}
 
 		
