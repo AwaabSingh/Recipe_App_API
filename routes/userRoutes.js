@@ -19,11 +19,6 @@ router.get("/confirm/:confirmationCode", verifyAccount);
 router.put("/resetpassword/:resettoken", resetPassword);
 router.post("/forgotpassword", forgotPassword);
 router.get("/me", authenticate, getMe);
-router.patch(
-  "/me/:id",
-  authenticate,
-  upload.single("profilephoto"),
-  updateProfile
-);
+router.patch("/me", authenticate, upload.single("profilephoto"), updateProfile);
 
 module.exports = router;

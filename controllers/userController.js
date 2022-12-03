@@ -48,7 +48,7 @@ exports.register = asyncHandler(async (req, res) => {
       });
 
       res.status(201).json({
-        msg: "Account Created Successfully! Please check your mail"
+        msg: "Account Created Successfully! Please check your mail",
       });
     }
   } catch (error) {
