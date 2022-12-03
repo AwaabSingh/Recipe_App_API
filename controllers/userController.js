@@ -35,7 +35,7 @@ exports.register = asyncHandler(async (req, res) => {
 
     if (user) {
       const text = `<h1>Email Confirmation</h1>
-        <h2>Hello ${username}</h2>
+        <h2>Hello ${user.email}</h2>
         <p>Verify your email address to complete the signup and login to your account to Kitchen Diary</p>
         <a href='https://kitchendiary.hng.tech/confirm/${user.confirmationCode}'> Click here</a>
 
