@@ -8,6 +8,7 @@ const {
 	deleteRecipe,
     updateRecipe
 } = require('../controllers/adminController');
+const { reviewPremiumRecipe } = require('../controllers/RecipeController');
 const { authenticate, admin } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
@@ -19,5 +20,6 @@ router.post('/create-recipe', authenticate, admin, createRecipeByAdmin);
 router.get('/allRecipes', authenticate, admin, getAllRecipes);
 router.delete('/delete-recipe/:id', authenticate, admin, deleteRecipe);
 router.put('/update-recipe/:id', authenticate, admin, updateRecipe);
+router.put("/:id/publish", authenticate, admin, reviewPremiumRecipe)
 
 module.exports = router;

@@ -379,6 +379,24 @@ const getMyPremiumRecipe = asyncHandler(async (req, res) => {
 		throw new Error(error.message);
 	}
 });
+const reviewPremiumRecipe = asyncHandler(async (req, res) => {
+	const id = req.params.id
+	const user = req.user;
+	const recipe = await Recipe.findOne({id})
+	if(!user || user.isAdmin === false) {
+	  res.status(400)
+	  throw new Error('user not authorized')
+	} else if(!recipe){
+	  res.status(404)
+	  throw new Error(`No recipe found with id ${id}`)
+	}else if(recipe.status !== 'free'){
+	  res.status(404)
+	  throw new Error('free recipes cannot be reviewd')
+	} else {
+	  recipe.isPublished = true
+	  res.status(200).json(recipe)
+	}
+	})
 
 module.exports = {
 	getPublishedRecipes,
@@ -394,4 +412,5 @@ module.exports = {
 	getPublishPremiumRecipes,
 	getMyPremiumRecipe,
 	highestVoteRecipe,
+	reviewPremiumRecipe,
 };

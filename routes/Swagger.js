@@ -729,6 +729,31 @@ const router = express.Router();
  *                     application/json:
  *                          schema:
  *                              $ref: '#/components/response/Error'
+ * /api/v1/recipe/category/{category}:
+ *     get:
+ *         summary: gets a list of all recipes that belong to a category
+ *         tags:
+ *             - recipes
+ *         parameters:
+ *             - in: path
+ *               name: category 
+ *               required: true
+ *         schema:
+ *           type: string
+ *         responses:
+ *             '200':
+ *                description: Success
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            #ref: '#/components/schemas/Recipe
+ *             '404':
+ *                 description: No recipies found
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ *
  */
 
 /**
@@ -1032,6 +1057,47 @@ const router = express.Router();
  *                     application/json:
  *                         schema:
  *                             $ref: '#/components/response/Error'
+ * 
+ *  /api/v1/admin/{id}/publish:
+ *     patch:
+ *         summary: finds a premium recipe by id and publishes it
+ *         tags:
+ *             - recipes
+ *         security:
+ *             - bearerAuth: []
+ *         parameters:
+ *             - in: path
+ *               name: id  
+ *               required: true
+ *         schema:
+ *           type: string
+ *         responses:
+ *             '200':
+ *                description: Success
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            type: object
+ *                            properties:
+ *                                isPublished:
+ *                                    type: boolean
+ *                                message:
+ *                                     type: string
+ *                                     description: success message.
+ *             '400':
+ *                 description: No recipe found with id
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ * 
+ *             '401':
+ *                 description: User not authorized
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ *
  *
  */
 
