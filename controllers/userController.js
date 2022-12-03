@@ -155,30 +155,47 @@ exports.getMe = asyncHandler(async (req, res) => {
  * @access Public
  */
 exports.updateProfile = asyncHandler(async (req, res) => {
-	const { fullname, username } = req.body;
+  const { fullname } = req.body;
 
-	try {
-		const user = await User.findById(req.user._id);
+  try {
+    const user = await User.findById(req.user.id);
+    // if user exist
+    if (user && !req.file) {
+      user.fullname = fullname;
 
-		if (user) {
-			user.fullname = fullname || user.fullname;
-			user.username = username || user.username;
-		}
+      // save updated user
+      const updatedUser = await user.save();
 
-		const updatedUser = await user.save();
+      res.status(200).json({
+        success: true,
+        message: "Profile Updated Successfully",
+        user: updatedUser,
+      });
+    }
+    // if user exist and image is uploaded
+    else if (user && user.profilePhoto) {
+      const fileName = req.file.filename;
+      const basePath = `${req.protocol}://${req.get("host")}/uploads/images/`;
+      user.fullname = fullname;
+      user.profilePhoto = `${basePath}${fileName}`;
 
-		return res.json({
-			success: true,
-			_id: updatedUser._id,
-			fullname: updatedUser.fullname,
-			username: updatedUser.username,
-		});
-	} catch (error) {
-		res.status(404);
-		throw new Error('User not found');
-	}
+      // save updated user
+      const updatedUser = await user.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Profile Updated Successfully",
+        user: updatedUser,
+      });
+    } else {
+      res.status(404);
+      throw new Error("User not found");
+    }
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
 });
-
 /**
  * @desc Forgot Password
  * @route POST
