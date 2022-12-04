@@ -211,42 +211,23 @@ exports.updateRecipe = asyncHandler(async (req, res) => {
 	}
 });
 
-// try {
 
-// 	const recipe = await Recipe.findById({ _id: req.params.id})
-// 	// const user = req.user;
-
-// 	console.log(recipe)
-
-// 	// if (!recipe) {
-// 	// 	res.status(400);
-// 	// 	throw new Error('Recipe is not found');
-// 	// }
-
-// 	// if (user.isAdmin === false) {
-// 	// 	res.status(401);
-// 	// 	throw new Error('User not authorized. Admins only');
-// 	// } else {
-// 	// 	recipe.isPublished = !recipe.isPublished;
-// 	// 	recipe.premiumStatus = !recipe.premiumStatus;
-// 	// }
-// } catch (error) {
-// 	res.status(500);
-// 	throw new Error(error.message);
-// }
-
-exports.premiumRecipe = asyncHandler(async (req, res) => {
+exports.publishPremiumRecipe = asyncHandler(async (req, res) => {
 	try {
-		const recipe = await Recipe.findById(req.params.id);
+		
+		const { id: recipeID } = req.params;
+		const recipe = await Recipe.findById({_id:recipeID});
+		console.log(id)
+		const user = req.user;
 
 		if (!recipe) {
 			res.status(400);
-			throw new Error('Recipe not found');
+			throw new Error('Recipe is not found');
 		}
 
-		if (req.user.isAdmin === false) {
-			req.status(401);
-			throw new Error('User not authorized as an admin');
+		if (user.isAdmin === false) {
+			res.status(401);
+			throw new Error('User not authorized. Admins only');
 		} else {
 			recipe.isPublished = !recipe.isPublished;
 			recipe.premiumStatus = !recipe.premiumStatus;

@@ -312,7 +312,6 @@ const highestVoteRecipe = asyncHandler(async (req, res) => {
 });
 
 
-
 const getPublishPremiumRecipes = asyncHandler(async (req, res) => {
 	const recipes = await Recipe.find();
 
