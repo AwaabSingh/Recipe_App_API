@@ -1,11 +1,12 @@
-const express = require('express')
-const dotenv = require('dotenv')
-const cors = require('cors')
-const morgan = require('morgan')
-const { errorHandler, notFound } = require('./middlewares/errorMiddleware')
-const { connectDB } = require('./config/db')
-const swaggerUI = require('swagger-ui-express')
-const swaggerJsDoc = require('swagger-jsdoc')
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const morgan = require("morgan");
+const { errorHandler, notFound } = require("./middlewares/errorMiddleware");
+const { connectDB } = require("./config/db");
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
+const path = require("path");
 
 //options object for swaggerjs
 const options = {
@@ -14,73 +15,60 @@ const options = {
     info: {
       title: "Kitchen Diary",
       version: "1.0.0",
-      description: "An api for printing recipes App"
+      description: "An api for printing recipes App",
     },
     servers: [
       {
-        url: 'https://recipe-app-42aq.onrender.com',
-        description: "Staging Server"
-
-
+        url: "https://recipe-app-42aq.onrender.com",
+        description: "Staging Server",
       },
       {
         //update to production url
-       url: 'http://localhost:4000',
-        description: "Development Server"
-
-      }
-     
-    ]
+        url: "http://localhost:4000",
+        description: "Development Server",
+      },
+    ],
   },
-  apis: ["./routes/*.js"]
+  apis: ["./routes/*.js"],
 };
 
-const specs = swaggerJsDoc(options)
- 
+const specs = swaggerJsDoc(options);
 
-const app = express()
+const app = express();
 
 //setting up swagger doc
-app.use("/api/v1/docs", swaggerUI.serve, swaggerUI.setup(specs))
-
-
-
+app.use("/api/v1/docs", swaggerUI.serve, swaggerUI.setup(specs));
+app.use(
+  "/uploads/images",
+  express.static(path.join(__dirname, "uploads/images"))
+);
 
 dotenv.config();
 app.use(express.json());
-app.use(cors())
-
-
-
-
-
+app.use(cors());
 
 // Routes imports
-const userRoutes = require('./routes/userRoutes')
-const recipeRoutes = require('./routes/recipeRoute')
-const adminRoutes = require('./routes/adminRoute');
-
+const userRoutes = require("./routes/userRoutes");
+const recipeRoutes = require("./routes/recipeRoute");
+const adminRoutes = require("./routes/adminRoute");
 
 // Routes configurations
-app.use('/api/v1/user', userRoutes)
-app.use('/api/v1/recipe', recipeRoutes)
-app.use('/api/v1/admin', adminRoutes);
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/recipe", recipeRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
-// Db connectio 
-connectDB()
+// Db connectio
+connectDB();
 // morgan logging configuration
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
 }
 
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 8000;
 
+app.use(errorHandler);
+app.use(notFound);
 
-app.use(errorHandler)
-app.use(notFound)
-
-app.listen(PORT , () => {
-     console.log(`Server running on port ${PORT}`)
-})
-
-
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

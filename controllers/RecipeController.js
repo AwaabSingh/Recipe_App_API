@@ -58,8 +58,12 @@ const createRecipe = asyncHandler(async (req, res) => {
 			templateId,
 			price,
 			status,
+			calories,
 			premiumStatus,
-		} = req.body;
+			howToServe,
+			servedWith,
+			isPurchased,
+		  } = req.body;
 
 		const recipe = await Recipe.create({
 			title,
@@ -77,6 +81,10 @@ const createRecipe = asyncHandler(async (req, res) => {
 			difficulty,
 			templateId,
 			premiumStatus,
+			isPurchased,
+			calories,
+			howToServe,
+			servedWith
 		});
 
 		if (recipe) {
