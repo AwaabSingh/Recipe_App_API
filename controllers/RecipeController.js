@@ -25,7 +25,7 @@ const getPublishedRecipes = asyncHandler(async (req, res) => {
 			res.status(200).json({ msg: 'No Published Recipe yet' });
 		}
 
-		res.status(200).json(recipes);
+		res.status(200).json(publishedRecipe);
 	} catch (error) {
 		res.status(400);
 		throw new Error(error.message);
@@ -63,7 +63,7 @@ const createRecipe = asyncHandler(async (req, res) => {
 			howToServe,
 			servedWith,
 			isPurchased,
-		  } = req.body;
+		} = req.body;
 
 		const recipe = await Recipe.create({
 			title,
@@ -84,7 +84,7 @@ const createRecipe = asyncHandler(async (req, res) => {
 			isPurchased,
 			calories,
 			howToServe,
-			servedWith
+			servedWith,
 		});
 
 		if (recipe) {
@@ -311,8 +311,6 @@ const highestVoteRecipe = asyncHandler(async (req, res) => {
 	}
 });
 
-
-
 const getPublishPremiumRecipes = asyncHandler(async (req, res) => {
 	const recipes = await Recipe.find();
 
@@ -359,6 +357,38 @@ const getMyPremiumRecipe = asyncHandler(async (req, res) => {
 	}
 });
 
+//Get All Premium Recipes
+const getPremiumRecipes = asyncHandler(async (req, res) => {
+	const recipes = await Recipe.find();
+
+	const publishedRecipe = recipes.filter(
+		(recipe) => recipe.status === 'premium'
+	);
+
+	if (!publishedRecipe) {
+		res.status(200).json({ msg: 'No Published Recipe yet' });
+	}
+
+	res.status(200).json(publishedRecipe);
+});
+
+//Get Purchased Recipes
+const getPurchasedRecipes = asyncHandler(async (req, res) => {
+	try {
+		const recipes = await Recipe.find({
+			isPurchased: true,
+			author: req.user.id,
+		});
+
+		
+			return res.status(200).json(recipes);
+		
+	} catch (error) {
+		res.json(400);
+		throw new Error(error.message);
+	}
+});
+
 module.exports = {
 	getPublishedRecipes,
 	createRecipe,
@@ -372,4 +402,7 @@ module.exports = {
 	getPublishPremiumRecipes,
 	getMyPremiumRecipe,
 	highestVoteRecipe,
+	getPremiumRecipes,
+	getPurchasedRecipes,
+	getPremiumRecipes,
 };
