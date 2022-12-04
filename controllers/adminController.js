@@ -184,7 +184,6 @@ exports.deleteRecipe = asyncHandler(async (req, res) => {
 	}
 });
 
-
 exports.updateRecipe = asyncHandler(async (req, res) => {
 	try {
 		const recipe = await Recipe.findById(req.params.id);
@@ -199,7 +198,6 @@ exports.updateRecipe = asyncHandler(async (req, res) => {
 			throw new Error('User not authorized as an admin');
 		}
 
-		
 		const updaterecipe = await Recipe.findByIdAndUpdate(
 			req.params.id,
 			req.body,
@@ -234,8 +232,15 @@ exports.publishPremiumRecipe = asyncHandler(async (req, res) => {
 			recipe.isPublished = !recipe.isPublished;
 			recipe.premiumStatus = !recipe.premiumStatus;
 		}
+
+		res.status(200).json({
+			msg: 'premium Recipe Published Successfully',
+			isPublished: recipe.isPublished,
+			premiumStatus: recipe.premiumStatus,
+		});
+		
 	} catch (error) {
-		res.status(500);
+		res.status(400);
 		throw new Error(error.message);
 	}
 });
