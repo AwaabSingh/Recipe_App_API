@@ -48,14 +48,17 @@ app.use(express.json());
 app.use(cors());
 
 // Routes imports
-const userRoutes = require("./routes/userRoutes");
-const recipeRoutes = require("./routes/recipeRoute");
-const adminRoutes = require("./routes/adminRoute");
+const userRoutes = require('./routes/userRoutes')
+const recipeRoutes = require('./routes/recipeRoute')
+const adminRoutes = require('./routes/adminRoute');
+const contactRoutes = require('./routes/contactRoute')
+
 
 // Routes configurations
-app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/recipe", recipeRoutes);
-app.use("/api/v1/admin", adminRoutes);
+app.use('/api/v1/user', userRoutes)
+app.use('/api/v1/recipe', recipeRoutes)
+app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/contact', contactRoutes)
 
 // Db connectio
 connectDB();

@@ -12,6 +12,31 @@ const router = express.Router();
  *             scheme: bearer
  *             bearerFormat: JWT
  *     schemas:
+ *         Contact:
+ *             type: object
+ *             required:
+ *                 - name
+ *                 - email
+ *                 - subject
+ *                 - description
+ *             properties:
+ *                 name:
+ *                      type: string
+ *                      description: name of the contact person
+ *                 email:
+ *                      type: string
+ *                      description: email of the contact person
+ *                 subject:
+ *                      type: string
+ *                      description: contact subject
+ *                 description:
+ *                      type: string
+ *                      description: description provided by the contact person
+ *             example:
+ *                 name: June Doe
+ *                 email: joedoe@ymail.com
+ *                 subject: any subject
+ *                 description: add a description here
  *         Admin:
  *             type: object
  *             required:
@@ -1032,7 +1057,71 @@ const router = express.Router();
  *                     application/json:
  *                         schema:
  *                             $ref: '#/components/response/Error'
- *
+ * /api/v1/admin/publish-recipe/premium/{id}:
+ *     put:
+ *         summary: an admin should publish a premium recipe
+ *         tags:
+ *             - Admins
+ *         security:
+ *             - bearerAuth: []
+ *         parameters:
+ *             - in: path
+ *               name: id
+ *               required: true
+ *         requestBody:
+ *             description: a json with all fields
+ *             required: false
+ *             content:
+ *                 application/json:
+ *                     schema: {
+ *                         type: object
+ *                      }
+ *         responses:
+ *             '200':
+ *                description: publish a premium recipe successfully
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            type: object
+ *                            properties:
+ *                                message:
+ *                                     type: string
+ *                                     description: success message.
+ *             '400':
+ *                 description: 
+ *                 content:
+ *                     application/json:
+ *                          schema:
+ *                              $ref: '#/components/response/Error'
+ * /api/v1/contact:
+ *     post:
+ *         summary: add a contact
+ *         tags:
+ *             - Contact
+ *         requestBody:
+ *             description: a json with all fields
+ *             required: true
+ *             content:
+ *                 application/json:
+ *                     schema:
+ *                          $ref: '#/components/schemas/Contact'
+ *         responses:
+ *             '201':
+ *                description: Created contact successfully
+ *                content:
+ *                    application/json:
+ *                        schema:
+ *                            type: object
+ *                            properties:
+ *                                message:
+ *                                     type: string
+ *                                     description: success message.
+ *             '404':
+ *                 description: Please provide all details
+ *                 content:
+ *                     application/json:
+ *                         schema:
+ *                             $ref: '#/components/response/Error'
  */
 
 module.exports = router;
