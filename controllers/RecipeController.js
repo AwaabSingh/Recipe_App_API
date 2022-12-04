@@ -303,28 +303,7 @@ const highestVoteRecipe = asyncHandler(async (req, res) => {
 	}
 });
 
-const publishPremiumRecipe = asyncHandler(async (req, res) => {
-	try {
-		const recipe = await Recipe.findById(req.params.id);
-		const user = req.user;
 
-		if (!recipe) {
-			res.status(400);
-			throw new Error('Recipe is not found');
-		}
-
-		if (user.isAdmin === false) {
-			res.status(401);
-			throw new Error('User not authorized. Admins only');
-		} else {
-			recipe.isPublished = !recipe.isPublished;
-			recipe.premiumStatus = !recipe.premiumStatus;
-		}
-	} catch (error) {
-		res.status(500);
-		throw new Error(error.message);
-	}
-});
 
 const getPublishPremiumRecipes = asyncHandler(async (req, res) => {
 	const recipes = await Recipe.find();
@@ -382,7 +361,6 @@ module.exports = {
 	voteRecipe,
 	printRecipe,
 	userRecipes,
-	publishPremiumRecipe,
 	getPublishPremiumRecipes,
 	getMyPremiumRecipe,
 	highestVoteRecipe,

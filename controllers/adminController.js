@@ -184,7 +184,6 @@ exports.deleteRecipe = asyncHandler(async (req, res) => {
 	}
 });
 
-
 exports.updateRecipe = asyncHandler(async (req, res) => {
 	try {
 		const recipe = await Recipe.findById(req.params.id);
@@ -199,7 +198,6 @@ exports.updateRecipe = asyncHandler(async (req, res) => {
 			throw new Error('User not authorized as an admin');
 		}
 
-		
 		const updaterecipe = await Recipe.findByIdAndUpdate(
 			req.params.id,
 			req.body,
@@ -207,6 +205,59 @@ exports.updateRecipe = asyncHandler(async (req, res) => {
 		);
 
 		res.status(200).json(updaterecipe);
+	} catch (error) {
+		res.status(400);
+		throw new Error(error.message);
+	}
+});
+
+// try {
+
+// 	const recipe = await Recipe.findById({ _id: req.params.id})
+// 	// const user = req.user;
+
+// 	console.log(recipe)
+
+// 	// if (!recipe) {
+// 	// 	res.status(400);
+// 	// 	throw new Error('Recipe is not found');
+// 	// }
+
+// 	// if (user.isAdmin === false) {
+// 	// 	res.status(401);
+// 	// 	throw new Error('User not authorized. Admins only');
+// 	// } else {
+// 	// 	recipe.isPublished = !recipe.isPublished;
+// 	// 	recipe.premiumStatus = !recipe.premiumStatus;
+// 	// }
+// } catch (error) {
+// 	res.status(500);
+// 	throw new Error(error.message);
+// }
+
+exports.premiumRecipe = asyncHandler(async (req, res) => {
+	try {
+		const recipe = await Recipe.findById(req.params.id);
+
+		if (!recipe) {
+			res.status(400);
+			throw new Error('Recipe not found');
+		}
+
+		if (req.user.isAdmin === false) {
+			req.status(401);
+			throw new Error('User not authorized as an admin');
+		} else {
+			recipe.isPublished = !recipe.isPublished;
+			recipe.premiumStatus = !recipe.premiumStatus;
+		}
+
+		res.status(200).json({
+			msg: 'premium Recipe Published Successfully',
+			isPublished: recipe.isPublished,
+			premiumStatus: recipe.premiumStatus,
+		});
+		
 	} catch (error) {
 		res.status(400);
 		throw new Error(error.message);
