@@ -9,7 +9,6 @@ const {
 	voteRecipe,
 	printRecipe,
 	userRecipes,
-	publishPremiumRecipe,
 	getPublishPremiumRecipes,
 	getMyPremiumRecipe,
 	highestVoteRecipe,
